@@ -141,7 +141,7 @@ module.exports.updatePassword = (req, res) => {
         .then((result) => {
 
             if (result) {
-                return res.status(200).send({ message: "Password updated successfully" });
+                return res.status(201).send({ message: "Password updated successfully" });
             }
         })
         .catch((err) => {
