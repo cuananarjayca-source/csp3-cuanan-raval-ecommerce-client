@@ -139,7 +139,7 @@ module.exports.updatePassword = (req, res) => {
 		)
 
 		.then((result) =>{
-			return res.status(204).send({ message: "Password updated successfully"});
+			return res.status(200).send({ message: "Password updated successfully"});
 		})
 	})
 	.catch((err)=> errorHandler(err, req, res));	
