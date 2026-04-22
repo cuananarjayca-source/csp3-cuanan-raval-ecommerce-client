@@ -117,39 +117,53 @@ module.exports.updateEmail = (req, res) => {
 };
 
 module.exports.updatePassword = (req, res) => {
-    if (req.body.newPassword.length < 8) {
-        return res.status(400).send({ message: "Password must be at least 8 characters" });
-    }
 
-    return User.findById(req.user.id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
+    let newPassword = bcrypt.hashSync(req.body.newPassword, 10);
 
-            const isPasswordCorrect = bcrypt.compareSync(req.body.oldPassword, user.password);
-            if (!isPasswordCorrect) {
-                return res.status(401).send({ message: "Incorrect current password" });
-            }
-
-            return User.findByIdAndUpdate(
-                req.user.id,
-                { password: bcrypt.hashSync(req.body.newPassword, 10) },
-                { new: true }
-            );
-        })
-        .then((result) => {
-
-            if (result) {
-                return res.status(201).send({ message: "Password updated successfully" });
-            }
-        })
-        .catch((err) => {
-
-            console.error(err); 
-            return errorHandler(err, req, res);
-        });
+    return User.findByIdAndUpdate(
+        req.user.id,
+        { password: newPassword }
+    )
+    .then(() => res.status(201).send({
+        message: "Password reset successfully"
+    }))
+    .catch(err => errorHandler(err, req, res));
 };
+
+// module.exports.updatePassword = (req, res) => {
+//     if (req.body.newPassword.length < 8) {
+//         return res.status(400).send({ message: "Password must be at least 8 characters" });
+//     }
+
+//     return User.findById(req.user.id)
+//         .then((user) => {
+//             if (!user) {
+//                 return res.status(404).send({ message: "User not found" });
+//             }
+
+//             const isPasswordCorrect = bcrypt.compareSync(req.body.oldPassword, user.password);
+//             if (!isPasswordCorrect) {
+//                 return res.status(401).send({ message: "Incorrect current password" });
+//             }
+
+//             return User.findByIdAndUpdate(
+//                 req.user.id,
+//                 { password: bcrypt.hashSync(req.body.newPassword, 10) },
+//                 { new: true }
+//             );
+//         })
+//         .then((result) => {
+
+//             if (result) {
+//                 return res.status(201).send({ message: "Password updated successfully" });
+//             }
+//         })
+//         .catch((err) => {
+
+//             console.error(err); 
+//             return errorHandler(err, req, res);
+//         });
+// };
 
 
 
