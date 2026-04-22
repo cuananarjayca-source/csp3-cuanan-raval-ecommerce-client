@@ -10,11 +10,11 @@ module.exports.registerUser = (req, res) => {
 	} else if (!req.body.lastName || req.body.lastName.trim() === "") {
 		return res.status(400).send({ message: "Last name is required" });
 	} else if (!req.body.email.includes("@")) {
-		return res.status(400).send({ message: "Incorrect email format"});
+		return res.status(400).send({ message: "Invalid email format"});
 	} else if (req.body.password.length < 8) {
 		return res.status(400).send({ message: "Password must be at least 8 characters"})
 	} else if (!req.body.mobileNo || req.body.mobileNo.length !==11){
-		return res.status(400).send({ message: "Mobile number must be 11 digits"})
+		return res.status(400).send({ message: "Invalid mobile number must be 11 digits"})
 	}
 	return User.findOne({ email: req.body.email})
 		.then((existingUser) =>{
@@ -139,7 +139,7 @@ module.exports.updatePassword = (req, res) => {
 		)
 
 		.then((result) =>{
-			return res.status(200).send({ message: "Password updated successfully"});
+			return res.status(201).send({ message: "Password updated successfully"});
 		})
 	})
 	.catch((err)=> errorHandler(err, req, res));	
