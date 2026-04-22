@@ -9,7 +9,7 @@ router.post("/register", userController.registerUser);
 
 router.post("/login",userController.loginUser);
 
-router.get("/profile", verify, userController.getProfile);
+router.get("/details", verify, userController.getProfile);
 
 router.patch("/update-profile", verify, userController.updateProfile);
 
@@ -23,7 +23,9 @@ router.get("/show-all-users", verify, verifyAdmin, userController.getAllUsers);
 
 router.get("/show-user/:id", verify, verifyAdmin, userController.getUserById);
 
-router.patch("/update-user/:id", verify, verifyAdmin, userController.updateUserAsAdmin);
+router.patch("/:id/set-as-admin", verify, verifyAdmin, userController.updateUserAsAdmin);
+
+router.patch("/:id/demote-admin", verify, verifyAdmin, userController.demoteUserToAdmin);
 
 router.patch("/deactivate-user/:id", verify, verifyAdmin, userController.deactivateUserAsAdmin);
 

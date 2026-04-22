@@ -13,8 +13,8 @@ module.exports.registerUser = (req, res) => {
 		return res.status(400).send({ message: "Incorrect email format"});
 	} else if (req.body.password.length < 8) {
 		return res.status(400).send({ message: "Password must be at least 8 characters"})
-	} else if (!req.body.phone || req.body.phone.length !==11){
-		return res.status(400).send({ message: "Phone number must be 11 digits"})
+	} else if (!req.body.mobileNo || req.body.mobileNo.length !==11){
+		return res.status(400).send({ message: "Mobile number must be 11 digits"})
 	}
 	return User.findOne({ email: req.body.email})
 		.then((existingUser) =>{
@@ -27,7 +27,7 @@ module.exports.registerUser = (req, res) => {
 			lastName: req.body.lastName,
 			email: req.body.email,
 			password: bcrypt.hashSync(req.body.password, 10),
-			phone: req.body.phone,
+			mobileNo: req.body.mobileNo,
 			isAdmin: false
 			});
 
@@ -82,7 +82,7 @@ module.exports.updateProfile= (req, res) => {
 		{
 			firstName: req.body.firstName,
 			lastName: req.body.lastName,
-			phone: req.body.phone
+			mobileNo: req.body.mobileNo
 		},
 		{ new: true }
 	)
@@ -176,25 +176,44 @@ module.exports.getUserById= (req, res) => {
 	.catch(err=> errorHandler(err, req, res));
 };
 
-module.exports.updateUserAsAdmin= (req, res) => {
-	return User.findByIdAndUpdate(req.params.id,
-		{
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			email: req.body.email,
-			phone: req.body.phone,
-			isAdmin: req.body.isAdmin
-		},
-		{ new: true }
-	)
-		.then((result) =>{
-			if(!result) {
-			return res.status(404).send({message: "User not found"});
-		} else {
-			return res.status(200).send({ message: "User profile updated successfully"});
-		}
-	})
-		.catch(err => errorHandler(err, req, res));
+module.exports.updateUserAsAdmin = (req, res) => {
+ 	return User.findByIdAndUpdate(req.params.id, 
+        { 
+        isAdmin: true 
+        }, 
+        { new: true } 
+    )
+    .then((result) => {
+        if (!result) {
+            return res.status(404).send({ message: "User not found" });
+        } else {
+            return res.status(200).send({ 
+                message: "User promoted to admin successfully",
+                updatedUser: result 
+            });
+        }
+    })
+    .catch(err => errorHandler(err, req, res));
+};
+
+module.exports.demoteUserToAdmin = (req, res) => {
+    return User.findByIdAndUpdate(req.params.id, 
+        { 
+            isAdmin: false 
+        }, 
+        { new: true }
+    )
+    .then((result) => {
+        if (!result) {
+            return res.status(404).send({ message: "User not found" });
+        } else {
+            return res.status(200).send({ 
+                message: "Admin demoted to regular user successfully",
+                user: result 
+            });
+        }
+    })
+    .catch(err => errorHandler(err, req, res));
 };
 
 module.exports.deactivateUserAsAdmin= (req, res) => {
@@ -222,6 +241,21 @@ module.exports.activateUserAsAdmin= (req, res) => {
 			return res.status(404).send({message: "User not found"});
 		} else {
 			return res.status(200).send({ message: "User profile reactivated"});
+		}
+	})
+		.catch(err => errorHandler(err, req, res));
+};
+
+module.exports.setUserAsAdmin = (req, res) => {
+	return User.findByIdAndUpdate(req.params.id,
+		{ isAdmin: true },
+		{ new: true }
+	)
+		.then((result) =>{
+			if(!result) {
+			return res.status(404).send({message: "User not found"});
+		} else {
+			return res.status(200).send({ message: "User set as admin successfully"});
 		}
 	})
 		.catch(err => errorHandler(err, req, res));

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
 		required: [true, "Password is Required"],
 	},
 
-	phone: {
+	mobileNo: {
 		type: String,
 		required: [true, "Mobile Number is Required"],
 	},
@@ -31,11 +31,6 @@ const userSchema = new mongoose.Schema({
 	isAdmin: {
 		type: Boolean,
 		default: false
-	},
-
-	createdAt: {
-		type: Date,
-		default: Date.now
 	},
 
 	isActive: {
