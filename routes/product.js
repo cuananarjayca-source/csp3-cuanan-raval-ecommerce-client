@@ -12,8 +12,8 @@ router.patch("/:productId/archive", verify, verifyAdmin, productController.archi
 router.patch("/:productId/activate", verify, verifyAdmin, productController.activateProduct);
 
 // USER and ADMIN LEVEL ACCESS
-router.get("/active", verify, productController .getActiveProduct);
-router.get("/:productId", verify, productController .getProductById);
+router.get("/active", productController .getActiveProduct);
+router.get("/:productId", productController .getProductById);
 
 
 module.exports = router;
