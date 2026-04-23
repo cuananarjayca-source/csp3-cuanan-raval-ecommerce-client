@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 // ROUTE IMPORTS
 const userRoutes = require("./routes/user");
+const productRoutes = require("./routes/product");
 
 
 // APP INITIALIZATION 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true}));
 
 // ROUTES
 app.use("/users", userRoutes);
+app.use("/products", productRoutes);
 
 
 
