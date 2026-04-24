@@ -5,9 +5,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 // ROUTE IMPORTS
-const userRoutes = require("./routes/User");
-const productRoutes = require("./routes/Product");
-const cartRoutes = require("./models/Cart");
+const userRoutes = require("./routes/user");
+const productRoutes = require("./routes/product");
+const cartRoutes = require("./routes/cart");
 
 
 // APP INITIALIZATION 
