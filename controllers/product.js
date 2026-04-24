@@ -1,4 +1,4 @@
-const Product = require("../models/product");
+const Product = require("../models/Product");
 const { errorHandler } = require("../auth");
 const jwt = require("jsonwebtoken"); 
 
