@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: true}));
 // ROUTES
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
+app.use("/cart", require("./routes/cart"));
 
 
 
