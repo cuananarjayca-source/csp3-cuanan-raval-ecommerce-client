@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const { errorHandler } = require("../auth");
 const bcrypt = require("bcryptjs");
 const auth = require("../auth");

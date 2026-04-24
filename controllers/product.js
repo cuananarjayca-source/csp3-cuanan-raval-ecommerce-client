@@ -1,6 +1,6 @@
-const Product = require("../models/Product");
+const Product = require("../models/product");
 const { errorHandler } = require("../auth");
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); 
 
 // USER AND ADMIN LEVEL ACCESS
 
