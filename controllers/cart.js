@@ -9,7 +9,15 @@ module.exports.getUserCart = (req, res) => {
     return Cart.findOne({ userId: req.user.id })
     .then(cart => {
         if (!cart) {
-            return res.status(400).send({ message: "User cart not found"});
+            const newCart = new Cart({
+                userId: req.user.id,
+                cartItems: [],
+                totalPrice: 0
+            });
+            return newCart.save()
+            .then(savedCart => res.status(200).send({
+                cart: savedCart
+            }));
         }
 
         return res.status(200).send({
@@ -19,13 +27,23 @@ module.exports.getUserCart = (req, res) => {
     .catch(err => errorHandler(err, req, res));
 };
 
+
 module.exports.addToCart = (req, res) => {
 	const { productId, quantity, subtotal } = req.body;
 
 	return Cart.findOne({ userId: req.user.id })
 	.then(cart=> {
 		if (!cart) {
-			return res.status(400).send({ message: "User cart not found"});
+			const newCart = new Cart({
+				userId: req.user.id,
+				cartItems: [{ productId, quantity, subtotal }],
+				totalPrice: subtotal
+			});
+			return newCart.save()
+			.then(result=> res.status(201).send({
+				message: "Item added to cart successfully",
+				result: result
+			}));
 		}
 
 	cart.cartItems.push({ productId, quantity, subtotal});
