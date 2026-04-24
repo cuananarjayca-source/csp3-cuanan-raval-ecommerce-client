@@ -9,7 +9,7 @@ module.exports.getUserCart = (req, res) => {
     return Cart.findOne({ userId: req.user.id })
     .then(cart => {
         if (!cart) {
-            return res.status(404).send({ message: "User cart not found"});
+            return res.status(400).send({ message: "User cart not found"});
         }
 
         return res.status(200).send({
@@ -25,7 +25,7 @@ module.exports.addToCart = (req, res) => {
 	return Cart.findOne({ userId: req.user.id })
 	.then(cart=> {
 		if (!cart) {
-			return res.status(404).send({ message: "User cart not found"});
+			return res.status(400).send({ message: "User cart not found"});
 		}
 
 	cart.cartItems.push({ productId, quantity, subtotal});
@@ -50,7 +50,7 @@ module.exports.changeProductQuantity = (req, res) => {
 	return Cart.findOne({ userId: req.user.id })
 	.then(cart=> {
 		if (!cart) {
-			return res.status(404).send({ message: "User cart not found"});
+			return res.status(400).send({ message: "User cart not found"});
 		}
 
 	const item = cart.cartItems.find(
