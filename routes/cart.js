@@ -8,11 +8,8 @@ const router = express.Router();
 router.get("/get-cart", verify, cartController.getUserCart);
 router.post("/add-to-cart", verify, cartController.addToCart);
 router.patch("/update-cart-quantity", verify, cartController.changeProductQuantity);
+router.patch("/:productId/remove-from-cart", verify, cartController.removeFromCart);
+router.put("/clear-cart", verify, cartController.clearCartItems);
 
-// Additional cart functionalities
-// router.post("/remove-from-cart", verify, cartController.removeFromCart);
-// router.post("/clear-cart", verify, cartController.clearCartItems);
-// router.post("/search-item", verify, cartController.searchProductByName);
-// router.post("/search-item-by-pricerange", verify, cartController.searchProductByPriceRange);
 
 module.exports = router;

@@ -121,3 +121,37 @@ module.exports.activateProduct = (req, res) => {
         })
         .catch((err) => errorHandler(err, req, res));
 };
+
+// Search products by name (case-insensitive)
+
+module.exports.searchProductByName = (req, res) => {
+    const { name } = req.body;
+    if (!name) {
+        return res.status(400).send({ message: "Please provide a product name to search." });
+    }
+    return Product.find({ 
+        name: { $regex: name, $options: "i" }, 
+        isActive: true 
+    })
+    .then((result) => {
+        if (result.length === 0) {
+            return res.status(404).send({ message: "No products match your search." });
+        }
+        return res.status(200).send(result);
+    })
+    .catch((err) => errorHandler(err, req, res));
+};
+
+
+// Search products by price range
+module.exports.searchProductByPriceRange = (req, res) => {
+    const { minPrice, maxPrice } = req.body;
+    return Product.find({ price: { $gte: minPrice, $lte: maxPrice }})
+        .then((result) => {
+            if (!result.length) {
+                return res.status(404).send({ message: "Product not found" });
+            }
+            return res.status(200).send(result);
+        })
+        .catch((err) => errorHandler(err, req, res));
+};

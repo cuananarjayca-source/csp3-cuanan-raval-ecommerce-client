@@ -11,9 +11,11 @@ router.patch("/:productId/update", verify, verifyAdmin, productController.update
 router.patch("/:productId/archive", verify, verifyAdmin, productController.archiveProduct);
 router.patch("/:productId/activate", verify, verifyAdmin, productController.activateProduct);
 
-// USER and ADMIN LEVEL ACCESS
+// All Users
 router.get("/active", productController .getActiveProduct);
 router.get("/:productId", productController .getProductById);
+router.post("/search-by-name", productController.searchProductByName);
+router.post("/search-by-price", productController.searchProductByPriceRange);
 
 
 module.exports = router;

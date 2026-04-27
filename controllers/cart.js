@@ -46,7 +46,7 @@ module.exports.addToCart = (req, res) => {
 			}));
 		}
 
-	cart.cartItems.push({ productId, quantity, subtotal});
+	cart.cartItems.push({ productId, quantity, subtotal}); 
 	cart.totalPrice += subtotal; 
 
 	return cart.save()
@@ -72,7 +72,7 @@ module.exports.changeProductQuantity = (req, res) => {
 		}
 
 	const item = cart.cartItems.find(
-		item => item.productId.toString() === productId);
+		item => item.productId.toString() === productId); 
 
 	if (!item) {
 		return res.status(404).send({ message: "Product not found in cart"});
@@ -85,13 +85,13 @@ module.exports.changeProductQuantity = (req, res) => {
 			}
 
 			const oldSubtotal = item.subtotal;
-			const quantity = Number(newQuantity);
-			const newSubtotal = quantity * product.price;
+			const quantity = Number(newQuantity); 
+			const newSubtotal = quantity * product.price; 
 
 			item.quantity = quantity;
 			item.subtotal = newSubtotal;
 
-			cart.totalPrice += newSubtotal - oldSubtotal;
+			cart.totalPrice += newSubtotal - oldSubtotal; 
 
 			return cart.save();
 		})
@@ -101,4 +101,51 @@ module.exports.changeProductQuantity = (req, res) => {
 		}));
 	})
 	.catch(err=> errorHandler(err,req,res));
+};
+
+module.exports.removeFromCart = (req, res) => {
+    const { productId } = req.params;
+
+    return Cart.findOne({ userId: req.user.id })
+    .then(cart=> {
+        if (!cart) {
+            return res.status(404).send({ message: "User cart not found"});
+        }
+
+    const item = cart.cartItems.find(
+        item => item.productId.toString() === productId);
+
+    if (!item) {
+        return res.status(404).send({ message: "Item not found in cart"});
+    }
+
+    cart.totalPrice -= item.subtotal;
+    cart.cartItems.pull({ _id: item._id});     
+
+    return cart.save()
+    .then(result=> res.status(200).send({
+        message: "Item removed from cart successfully",
+        updatedCart: result
+        }));
+    })
+    .catch(err=> errorHandler(err,req,res));
+};
+
+module.exports.clearCartItems = (req, res) => {
+    return Cart.findOne({ userId: req.user.id })
+    .then(cart=> {
+        if (!cart) {
+            return res.status(404).send({ message: "User cart not found"});
+        }
+
+    cart.cartItems = [];    
+    cart.totalPrice = 0;
+     
+    return cart.save()
+    .then(result=> res.status(200).send({
+        message: "Cart cleared successfully",
+        cart: result
+        }));
+    })
+    .catch(err=> errorHandler(err,req,res));
 };
