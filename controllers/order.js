@@ -43,7 +43,7 @@ module.exports.getUserOrder = (req, res) => {
             return newOrder.save()
             .then(savedOrder => res.status(200).send({
                 order: order
-            });
+            }));
         })
     .catch(err => errorHandler(err, req, res));
 };
