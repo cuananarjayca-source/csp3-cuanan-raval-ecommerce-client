@@ -4,6 +4,7 @@ const Product = require("../models/Product");
 const Cart = require("../models/Cart");
 const { errorHandler } = require("../auth");
 
+// Authenticated user access only
 
 module.exports.createOrder = (req, res) => {
 	return Cart.findOne({ userId: req.user.id })
@@ -11,7 +12,7 @@ module.exports.createOrder = (req, res) => {
 		if (!cart || cart.cartItems.length === 0) {
 			return res.status(400).send({ error: "No Items to Checkout" });
 		}
-		const orderItems = cart.cartItems.map(item => ({ //
+		const orderItems = cart.cartItems.map(item => ({ 
 			productId: item.productId,
 			quantity: item.quantity,
 			subtotal: item.subtotal 
@@ -20,7 +21,7 @@ module.exports.createOrder = (req, res) => {
 		const order = new Order({
 			userId: req.user.id,
 			productsOrdered: orderItems,
-			totalPrice: totalPrice
+			totalPrice: totalPrice 
 		});
 		return order.save()
 		.then(result => res.status(201).send({
