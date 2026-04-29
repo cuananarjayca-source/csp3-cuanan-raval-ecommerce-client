@@ -9,6 +9,8 @@ const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
 const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
+const paymentRoutes = require("./routes/payment");
+const reviewRoutes = require("./routes/review");
 
 // APP INITIALIZATION 
 const app = express();
@@ -28,6 +30,8 @@ app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", orderRoutes);
+app.use("/payment", paymentRoutes);
+app.use("/review", reviewRoutes);
 
 
 
