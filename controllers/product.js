@@ -1,48 +1,112 @@
 const Product = require("../models/Product");
 const { errorHandler } = require("../auth");
-const jwt = require("jsonwebtoken"); 
+
 
 // USER AND ADMIN LEVEL ACCESS
 
-// Retrieve all active products
 module.exports.getActiveProduct = (req, res) => {
     return Product.find({ isActive: true })
         .then((result) => res.status(200).send(result))
         .catch((err) => errorHandler(err, req, res));
 };
 
-// Retrieve product by ID (only if active)
 module.exports.getProductById = (req, res) => {
     return Product.findOne({ _id: req.params.productId, isActive: true })
         .then((result) => {
             if (!result) {
                 return res.status(404).send({ message: "Product not found or is inactive" });
-            } else {
-                return res.status(200).send(result);
             }
+            return res.status(200).send(result);
         })
         .catch((err) => errorHandler(err, req, res));
+};
+
+module.exports.searchProductByName = (req, res) => {
+    const { name } = req.body;
+    if (!name) {
+        return res.status(400).send({ message: "Please provide a product name to search." });
+    }
+    return Product.find({
+        name: { $regex: name, $options: "i" },
+        isActive: true
+    })
+        .then((result) => {
+            if (result.length === 0) {
+                return res.status(404).send({ message: "No products match your search." });
+            }
+            return res.status(200).send(result);
+        })
+        .catch((err) => errorHandler(err, req, res));
+};
+
+module.exports.searchProductByPriceRange = (req, res) => {
+    const { minPrice, maxPrice } = req.body;
+
+    if (minPrice === undefined || minPrice === null) {
+        return res.status(400).send({ message: "minPrice is required" });
+    }
+    if (maxPrice === undefined || maxPrice === null) {
+        return res.status(400).send({ message: "maxPrice is required" });
+    }
+    if (typeof minPrice !== "number" || typeof maxPrice !== "number") {
+        return res.status(400).send({ message: "minPrice and maxPrice must be numbers" });
+    }
+    if (minPrice < 0 || maxPrice < 0) {
+        return res.status(400).send({ message: "Price values must not be negative" });
+    }
+    if (minPrice > maxPrice) {
+        return res.status(400).send({ message: "minPrice must not be greater than maxPrice" });
+    }
+
+    return Product.find({
+        price: { $gte: minPrice, $lte: maxPrice },
+        isActive: true
+    })
+        .then((result) => {
+            if (!result.length) {
+                return res.status(404).send({ message: "No products found in that price range" });
+            }
+            return res.status(200).send(result);
+        })
+        .catch((err) => errorHandler(err, req, res));
+};
+
+module.exports.searchProductByRating = (req, res) => {
+    const minRating = Number(req.query.minRating) || 0;
+
+    return Product.find({ 
+        avgRating: { $gte: minRating }, 
+        isActive: true 
+    })
+    .then(products => {
+        if (products.length === 0) {
+            return res.status(404).send({ message: "No products found with this rating." });
+        }
+        return res.status(200).send({ products });
+    })
+    .catch(err => errorHandler(err, req, res));
 };
 
 
 // ADMIN LEVEL ACCESS
 
-// Create Product
 module.exports.createProduct = (req, res) => {
-    if (!req.body.name) {
+    const { name, description, price } = req.body;
+
+    if (!name) {
         return res.status(400).send({ message: "Product name is required" });
     }
-    if (!req.body.description) {
+    if (!description) {
         return res.status(400).send({ message: "Product description is required" });
     }
-    if (!req.body.price) {
+    if (!price) {
         return res.status(400).send({ message: "Product price is required" });
     }
 
     const product = new Product({
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price
+        name,
+        description,
+        price
     });
 
     return product.save()
@@ -53,30 +117,37 @@ module.exports.createProduct = (req, res) => {
         .catch((err) => errorHandler(err, req, res));
 };
 
-// Retrieve all products
 module.exports.getAllProduct = (req, res) => {
     return Product.find()
         .then((result) => res.status(200).send(result))
         .catch((err) => errorHandler(err, req, res));
 };
 
-// Update Product Info
 module.exports.updateProduct = (req, res) => {
-    return Product.findByIdAndUpdate(
-        req.params.productId,
-        { $set: req.body },
-        { new: true }
-    )
+    const { name, description, price } = req.body;
+
+    return Product.findById(req.params.productId)
         .then((result) => {
             if (!result) {
                 return res.status(404).send({ message: "Product not found" });
             }
-            return res.status(200).send({ success: true, message: "Product updated successfully" });
+            if (!result.isActive) {
+                return res.status(400).send({ message: "Cannot update an archived product" });
+            }
+
+            result.name = name ?? result.name;
+            result.description = description ?? result.description;
+            result.price = price ?? result.price;
+
+            return result.save()
+                .then((updated) => res.status(200).send({
+                    message: "Product updated successfully",
+                    updatedProduct: updated
+                }));
         })
         .catch((err) => errorHandler(err, req, res));
 };
 
-// Archive Product (set isActive to false) check if product is already archived
 module.exports.archiveProduct = (req, res) => {
     return Product.findById(req.params.productId)
         .then((result) => {
@@ -84,22 +155,20 @@ module.exports.archiveProduct = (req, res) => {
                 return res.status(404).send({ message: "Product not found" });
             }
             if (!result.isActive) {
-                return res.status(200).send({ message: "Product is already archived", archiveProduct: result });
+                return res.status(400).send({ message: "Product is already archived" });
             }
-            return Product.findByIdAndUpdate(
-                req.params.productId,
-                { isActive: false },
-                { new: true }
-            )
-                .then((updatedResult) => {
-                    return res.status(200).send({ success: true, message: "Product archived successfully" });
-                })
-                .catch((err) => errorHandler(err, req, res));
+
+            result.isActive = false;
+
+            return result.save()
+                .then((updated) => res.status(200).send({
+                    message: "Product archived successfully",
+                    result: updated
+                }));
         })
         .catch((err) => errorHandler(err, req, res));
 };
 
-// Activate Product (set isActive to true) check if product is already active
 module.exports.activateProduct = (req, res) => {
     return Product.findById(req.params.productId)
         .then((result) => {
@@ -107,51 +176,16 @@ module.exports.activateProduct = (req, res) => {
                 return res.status(404).send({ message: "Product not found" });
             }
             if (result.isActive) {
-                return res.status(200).send({ message: "Product is already active", activateProduct: result });
+                return res.status(400).send({ message: "Product is already active" });
             }
-            return Product.findByIdAndUpdate(
-                req.params.productId,
-                { isActive: true },
-                { new: true }
-            )
-                .then((updatedResult) => {
-                    return res.status(200).send({ success: true, message: "Product activated successfully" });
-                })
-                .catch((err) => errorHandler(err, req, res));
-        })
-        .catch((err) => errorHandler(err, req, res));
-};
 
-// Search products by name (case-insensitive)
+            result.isActive = true;
 
-module.exports.searchProductByName = (req, res) => {
-    const { name } = req.body;
-    if (!name) {
-        return res.status(400).send({ message: "Please provide a product name to search." });
-    }
-    return Product.find({ 
-        name: { $regex: name, $options: "i" }, 
-        isActive: true 
-    })
-    .then((result) => {
-        if (result.length === 0) {
-            return res.status(404).send({ message: "No products match your search." });
-        }
-        return res.status(200).send(result);
-    })
-    .catch((err) => errorHandler(err, req, res));
-};
-
-
-// Search products by price range
-module.exports.searchProductByPriceRange = (req, res) => {
-    const { minPrice, maxPrice } = req.body;
-    return Product.find({ price: { $gte: minPrice, $lte: maxPrice }})
-        .then((result) => {
-            if (!result.length) {
-                return res.status(404).send({ message: "Product not found" });
-            }
-            return res.status(200).send(result);
+            return result.save()
+                .then((updated) => res.status(200).send({
+                    message: "Product activated successfully",
+                    result: updated
+                }));
         })
         .catch((err) => errorHandler(err, req, res));
 };
