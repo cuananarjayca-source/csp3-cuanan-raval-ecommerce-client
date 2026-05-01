@@ -1,6 +1,6 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
-require("dotenv").config();
 
 module.exports.createAccessToken = (user) => {
 	const data = {
@@ -67,4 +67,12 @@ module.exports.errorHandler = (err, req, res, next) => {
 			details: err.details || null
 		}
 	})
+}
+
+module.exports.isLoggedIn = (req, res, next) => {
+	if (req.isAuthenticated()) {
+		return next();
+	} else {
+		res.status(401).send("Unauthorized");
+	}
 }
