@@ -195,67 +195,47 @@ module.exports.changeProductQuantity = (req, res) => {
 module.exports.removeFromCart = (req, res) => {
     const { productId } = req.params;
 
-    return User.findById(req.user.id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            if (!user.isActive) {
-                return res.status(403).send({ message: "Account is deactivated. Please contact support." });
-            }
+    return Cart.findOne({ userId: req.user.id })
+    .then(cart => {
+        if (!cart) return res.status(404).send({ message: "User cart not found" });
 
-            return Cart.findOne({ userId: req.user.id })
-                .then((cart) => {
-                    if (!cart) {
-                        return res.status(404).send({ message: "User cart not found" });
-                    }
+        const itemIndex = cart.cartItems.findIndex(item => item.productId.toString() === productId);
 
-                    const item = cart.cartItems.find(
-                        (item) => item.productId.toString() === productId
-                    );
+        if (itemIndex === -1) {
+            return res.status(404).send({ message: "Item not found in cart" });
+        }
 
-                    if (!item) {
-                        return res.status(404).send({ message: "Item not found in cart" });
-                    }
+        cart.totalPrice -= cart.cartItems[itemIndex].subtotal;
+        cart.cartItems.splice(itemIndex, 1); 
 
-                    cart.totalPrice = Math.max(0, cart.totalPrice - item.subtotal);
-                    cart.cartItems.pull({ _id: item._id });
-
-                    return cart.save()
-                        .then((result) => res.status(200).send({
-                            message: "Item removed from cart successfully",
-                            updatedCart: result
-                        }));
-                });
-        })
-        .catch((err) => errorHandler(err, req, res));
+        return cart.save();
+    })
+    .then(result => res.status(200).send({
+        message: "Item removed from cart successfully",
+        updatedCart: result
+    }))
+    .catch(err => errorHandler(err, req, res));
 };
 
+// CLEAR ALL ITEMS
 module.exports.clearCartItems = (req, res) => {
-    return User.findById(req.user.id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send({ message: "User not found" });
-            }
-            if (!user.isActive) {
-                return res.status(403).send({ message: "Account is deactivated. Please contact support." });
-            }
 
-            return Cart.findOne({ userId: req.user.id })
-                .then((cart) => {
-                    if (!cart) {
-                        return res.status(404).send({ message: "User cart not found" });
-                    }
+    return Cart.findOne({ userId: req.user.id })
+    .then(cart => {
+        if (!cart) return res.status(404).send({ message: "User cart not found" });
 
-                    cart.cartItems = [];
-                    cart.totalPrice = 0;
+        if (cart.cartItems.length === 0) {
+            return res.status(400).send({ message: "Cart is already empty" });
+        }
 
-                    return cart.save()
-                        .then((result) => res.status(200).send({
-                            message: "Cart cleared successfully",
-                            cart: result
-                        }));
-                });
-        })
-        .catch((err) => errorHandler(err, req, res));
+        cart.cartItems = [];    
+        cart.totalPrice = 0;
+         
+        return cart.save();
+    })
+    .then(result => res.status(200).send({
+        message: "Cart cleared successfully",
+        cart: result
+    }))
+    .catch(err => errorHandler(err, req, res));
 };

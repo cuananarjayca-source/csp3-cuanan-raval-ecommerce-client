@@ -1,8 +1,12 @@
 // IMPORTS
-const dotenv = require("dotenv");
-dotenv.config();
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
+
+// Google OAuth
+const passport = require('passport');
+const session = require('express-session');
+require('./passport');
 
 // ROUTE IMPORTS
 const userRoutes = require("./routes/user");
@@ -25,6 +29,15 @@ db.once("open", () => console.log("Now connected to MongoDB Atlas."));
 // MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // ROUTES
 app.use("/users", userRoutes);
