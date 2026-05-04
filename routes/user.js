@@ -23,9 +23,9 @@ router.get("/show-all-users", verify, verifyAdmin, userController.getAllUsers);
 
 router.get("/show-user/:id", verify, verifyAdmin, userController.getUserById);
 
-router.patch("/:id/set-as-admin", verify, verifyAdmin, userController.updateUserAsAdmin);
+router.patch("/:id/promote-admin", verify, verifyAdmin, userController.promoteUserToAdmin);
 
-router.patch("/:id/demote-admin", verify, verifyAdmin, userController.demoteUserToAdmin);
+router.patch("/:id/demote-admin", verify, verifyAdmin, userController.demoteUserFromAdmin);
 
 router.patch("/deactivate-user/:id", verify, verifyAdmin, userController.deactivateUserAsAdmin);
 

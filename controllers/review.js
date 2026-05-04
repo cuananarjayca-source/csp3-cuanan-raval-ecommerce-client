@@ -3,37 +3,37 @@ const Review = require("../models/Review");
 const { errorHandler } = require("../auth");
 
 module.exports.createReview = (req, res) => {
-	const { productId, rating, comment } = req.body;
+		const { productId, rating, comment } = req.body;
 
-	if(!productId) {
-		return res.status(400).send({ message: "Product ID is required" });
-	}
-	if(!rating) {
-		return res.status(400).send({ message: "Rating 1-5 is required" });
-	}
+		if(!productId) {
+			return res.status(400).send({ message: "Product ID is required" });
+		}
+		if(!rating) {
+			return res.status(400).send({ message: "Rating 1-5 is required" });
+		}
 
-	return Product.findById(productId)
-		.then ((product) => {
-			if(!product) {
-				return res.status(404).send({ message: "Product not found" });
-			}
+		return Product.findById(productId)
+			.then ((product) => {
+				if(!product) {
+					return res.status(404).send({ message: "Product not found" });
+				}
 
-			return Review.findOne({ userId: req.user.id, productId })
-    			.then((existing) => {
-        	if (existing) {
-            	return res.status(409).send({ message: "You have already reviewed this product" });
-        	}
+				return Review.findOne({ userId: req.user.id, productId })
+    				.then((existing) => {
+        		if (existing) {
+            		return res.status(409).send({ message: "You have already reviewed this product" });
+        		}
         	const newReview = new Review({
-				userId: req.user.id,
-				productId,
-				rating,
-				comment
-			});
+						userId: req.user.id,
+						productId,
+						rating,
+						comment
+				});
 
 			return newReview.save()
-			.then((result) =>res.status(201).send({
-				message: "Review created successfully",
-				result
+				.then((result) =>res.status(201).send({
+					message: "Review created successfully",
+					result
 			}));
 		});
     })
@@ -41,7 +41,8 @@ module.exports.createReview = (req, res) => {
 };
 
 module.exports.getMyReviews = (req, res) => {
-  return Review.find({ userId:req.user.id })
+  return Review.find({ userId: req.user.id })
+    .populate("productId", "name price") 
     .then((result) => {
       if (result.length === 0) {
         return res.status(404).send({ message: "No reviews found" });
@@ -123,6 +124,36 @@ module.exports.getReviewById = (req, res) => {
       });
     })
     .catch((err) => errorHandler(err, req, res));
+};
+
+module.exports.getReviewsByProduct = (req, res) => {
+    return Review.find({ productId: req.params.productId })
+        .populate("userId", "firstName lastName") 
+        .then(result => {
+            if (result.length === 0) {
+                return res.status(404).send({ message: "No reviews found for this product." });
+            }
+            return res.status(200).send({
+                message: "Product reviews found",
+                reviews: result
+            });
+        })
+        .catch(err => errorHandler(err, req, res));
+};
+
+module.exports.getReviewsByUser = (req, res) => {
+    return Review.find({ userId: req.params.userId })
+        .populate("productId", "name") 
+        .then(result => {
+            if (result.length === 0) {
+                return res.status(404).send({ message: "This user has not submitted any reviews." });
+            }
+            return res.status(200).send({
+                message: "User history found",
+                reviews: result
+            });
+        })
+        .catch(err => errorHandler(err, req, res));
 };
 
 module.exports.editReviewAsAdmin = (req, res) => {

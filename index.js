@@ -11,6 +11,7 @@ const cartRoutes = require("./routes/cart");
 const orderRoutes = require("./routes/order");
 const paymentRoutes = require("./routes/payment");
 const reviewRoutes = require("./routes/review");
+const stockRoutes = require("./routes/stock");
 
 // APP INITIALIZATION 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/cart", cartRoutes);
 app.use("/orders", orderRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/review", reviewRoutes);
+app.use("/stocks", stockRoutes);
 
 
 

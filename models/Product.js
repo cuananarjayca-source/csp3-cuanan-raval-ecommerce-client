@@ -13,6 +13,15 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Product price is required"]
     },
+    avgRating: {
+        type: Number,
+        default: 0,
+        index: true // Makes searching by rating lightning fast
+    },
+    totalReviews: {
+        type: Number,
+        default: 0
+    },
     isActive: {
         type: Boolean,
         default: true
