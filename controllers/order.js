@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
+const Stock = require("../models/Stock");
 const User = require("../models/User");
 const { errorHandler } = require("../auth");
 
@@ -40,7 +41,18 @@ module.exports.createOrder = (req, res) => {
 							cart.cartItems = [];
 							cart.totalPrice = 0;
 
-							return cart.save()
+							const stockUpdates = savedOrder.productsOrdered.map((item) =>
+								Stock.findOne({ productId: item.productId })
+									.then((stock) => {
+										if (stock) {
+											stock.quantity = Math.max(0, stock.quantity - item.quantity);
+											return stock.save();
+										}
+									})
+							);
+
+							return Promise.all(stockUpdates)
+								.then(() => cart.save())
 								.then(() => Order.findById(savedOrder._id)
 									.populate("productsOrdered.productId", "name price")
 								)
@@ -109,9 +121,24 @@ module.exports.updateOrderStatus = (req, res) => {
 				return res.status(400).send({ message: `Order is already ${status}` });
 			}
 
+			const previousStatus = order.status;
 			order.status = status;
 
 			return order.save()
+				.then((savedOrder) => {
+					if (status === "Cancelled" && previousStatus !== "Cancelled") {
+						const stockRestores = savedOrder.productsOrdered.map((item) =>
+							Stock.findOne({ productId: item.productId })
+								.then((stock) => {
+									if (stock) {
+										stock.quantity += item.quantity;
+										return stock.save();
+									}
+								})
+						);
+						return Promise.all(stockRestores);
+					}
+				})
 				.then(() => Order.findById(order._id)
 					.populate("productsOrdered.productId", "name price")
 				)
