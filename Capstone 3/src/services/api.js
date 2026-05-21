@@ -1,0 +1,16 @@
+export {
+    default,
+    DEFAULT_THEME,
+    themeToCssVars,
+    getErrorMessage,
+    getActiveProducts,
+    getProductById,
+    searchProductsByName,
+    searchProductsByPrice,
+    searchProductsByRating,
+    extractCategories,
+    applyClientFilters,
+    loadCatalogProducts,
+    registerUser,
+    loginUser,
+} from "../api.js";

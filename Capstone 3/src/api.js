@@ -1,7 +1,8 @@
 import axios from "axios";
 
+/** Backend: http://localhost:4000 (cors enabled). Override with VITE_API_BASE_URL in .env */
 const api = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000",
 });
 
 api.interceptors.request.use((config) => {
@@ -12,13 +13,129 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// ——— Auth (user routes) ———
+
 export async function registerUser(userData) {
-    return await api.post('/users/register', userData);
+    return api.post("/users/register", userData);
 }
 
 export async function loginUser(credentials) {
-    // Hits your router.post("/login", userController.loginUser)
-    return await api.post('/users/login', credentials);
+    return api.post("/users/login", credentials);
+}
+
+// ——— Theme helpers ———
+
+export const DEFAULT_THEME = {
+    primary: "#4B2C6D",
+    secondary: "#C4A1D5",
+    accent: "#B19CD9",
+    background: "#F3E5F5",
+    surface: "#ffffff",
+    text: "#2d1b3d",
+    heroText: "#ffffff",
+};
+
+export function themeToCssVars(theme = DEFAULT_THEME) {
+    const t = { ...DEFAULT_THEME, ...theme };
+    return {
+        "--theme-primary": t.primary,
+        "--theme-secondary": t.secondary || t.accent,
+        "--theme-accent": t.accent || t.secondary,
+        "--theme-bg": t.background,
+        "--theme-surface": t.surface,
+        "--theme-text": t.text,
+        "--theme-hero-text": t.heroText,
+    };
+}
+
+export function getErrorMessage(err, fallback = "Request failed") {
+    return err?.response?.data?.message ?? fallback;
+}
+
+// ——— Products (productController) ———
+
+export async function getActiveProducts() {
+    const { data } = await api.get("/products/active");
+    return Array.isArray(data) ? data : [];
+}
+
+export async function getProductById(productId) {
+    const { data } = await api.get(`/products/${productId}`);
+    return data;
+}
+
+export async function searchProductsByName(name) {
+    const { data } = await api.post("/products/search-by-name", { name });
+    return Array.isArray(data) ? data : [];
+}
+
+export async function searchProductsByPrice(minPrice, maxPrice) {
+    const { data } = await api.post("/products/search-by-price", {
+        minPrice: Number(minPrice),
+        maxPrice: Number(maxPrice),
+    });
+    return Array.isArray(data) ? data : [];
+}
+
+export async function searchProductsByRating(minRating = 0) {
+    const { data } = await api.get("/products/search-by-rating", { params: { minRating } });
+    return data?.products ?? [];
+}
+
+export function extractCategories(products = []) {
+    return [...new Set(products.map((p) => p.category).filter(Boolean))].sort();
+}
+
+const SORT_FNS = {
+    newest: (a, b) => new Date(b.createdOn) - new Date(a.createdOn),
+    "price-asc": (a, b) => a.price - b.price,
+    "price-desc": (a, b) => b.price - a.price,
+    "name-asc": (a, b) => a.name.localeCompare(b.name),
+    "name-desc": (a, b) => b.name.localeCompare(a.name),
+};
+
+export function applyClientFilters(products, { category = "", sort = "newest", featured = false } = {}) {
+    let list = [...products];
+    if (featured) list = list.filter((p) => p.featured);
+    if (category) list = list.filter((p) => p.category === category);
+    return list.sort(SORT_FNS[sort] || SORT_FNS.newest);
+}
+
+export async function loadCatalogProducts(filters = {}) {
+    const name = filters.search?.trim();
+    const minPrice =
+        filters.minPrice !== "" && filters.minPrice != null ? Number(filters.minPrice) : null;
+    const maxPrice =
+        filters.maxPrice !== "" && filters.maxPrice != null ? Number(filters.maxPrice) : null;
+    const minRating =
+        filters.minRating !== "" && filters.minRating != null ? Number(filters.minRating) : null;
+
+    let products = [];
+
+    try {
+        if (name) {
+            products = await searchProductsByName(name);
+        } else if (
+            minPrice != null &&
+            maxPrice != null &&
+            !Number.isNaN(minPrice) &&
+            !Number.isNaN(maxPrice)
+        ) {
+            products = await searchProductsByPrice(minPrice, maxPrice);
+        } else if (minRating != null && !Number.isNaN(minRating) && minRating > 0) {
+            products = await searchProductsByRating(minRating);
+        } else {
+            products = await getActiveProducts();
+        }
+    } catch (err) {
+        if (err?.response?.status === 404) {
+            products = [];
+        } else {
+            throw err;
+        }
+    }
+
+    return applyClientFilters(products, filters);
 }
 
 export default api;
