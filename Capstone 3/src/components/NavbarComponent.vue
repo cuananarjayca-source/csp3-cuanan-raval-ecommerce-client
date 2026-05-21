@@ -32,7 +32,7 @@ onMounted(() => {
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <RouterLink class="nav-link" to="/">Home</RouterLink>
-                    </li>
+                    </li >
                     <li class="nav-item">
                         <RouterLink class="nav-link" to="/products">Products</RouterLink>
                     </li>
@@ -45,9 +45,6 @@ onMounted(() => {
                         </li>
                     </template>
                     <template v-else>
-                        <li v-if="user.email" class="nav-item">
-                            <span class="navbar-text">{{ user.email }}</span>
-                        </li>
                         <li class="nav-item">
                             <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
                         </li>
