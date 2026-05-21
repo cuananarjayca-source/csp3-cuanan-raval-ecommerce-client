@@ -9,6 +9,9 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
+
+# Large product can PNGs (~4MB each) — compress before committing or host elsewhere
+public/products/*.png
 dist
 dist-ssr
 coverage

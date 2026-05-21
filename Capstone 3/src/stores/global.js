@@ -6,17 +6,18 @@ export const useGlobalStore = defineStore('global',() => {
   
   let user = reactive({
     token: localStorage.getItem('token'),
-    email: null
+    email: null,
+    isAdmin: false,
   })
 
   async function getUserDetails(token){
       
     if(!token) {
       user.token = null;
-        user.email = null;
-
-          return;
-      }
+      user.email = null;
+      user.isAdmin = false;
+      return;
+    }
 
         let { data } = await api.get('/users/details'); 
             user.token = token;

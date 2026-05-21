@@ -1,11 +1,7 @@
-<script setup>
-	
-</script>
-
 <template>
-	<h1>I am the footer</h1>
+    <footer class="bg-light border-top py-3 mt-4">
+        <div class="container text-center text-muted small">
+            &copy; {{ new Date().getFullYear() }} Taro606
+        </div>
+    </footer>
 </template>
-
-<style scoped>
-	
-</style>
