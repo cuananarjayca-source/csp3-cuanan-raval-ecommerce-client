@@ -9,6 +9,7 @@ import App from './App.vue';
 
 import HomePage from "./pages/Home.vue";
 import LoginPage from "./pages/Login.vue";
+import LogoutPage from "./pages/Logout.vue";
 import ProductCatalogPage from "./pages/ProductCatalog.vue";
 import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
@@ -29,6 +30,11 @@ const router = createRouter({
     path: '/login', 
     name: 'Login',
     component: LoginPage 
+  },
+  { 
+    path: '/logout', 
+    name: 'Logout',
+    component: LogoutPage 
   },
   { 
     path: '/register', 

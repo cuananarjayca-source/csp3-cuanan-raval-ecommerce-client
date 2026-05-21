@@ -12,4 +12,13 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+export async function registerUser(userData) {
+    return await api.post('/users/register', userData);
+}
+
+export async function loginUser(credentials) {
+    // Hits your router.post("/login", userController.loginUser)
+    return await api.post('/users/login', credentials);
+}
+
 export default api;

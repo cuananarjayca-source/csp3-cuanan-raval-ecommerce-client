@@ -16,6 +16,7 @@ const orderRoutes = require("./routes/order");
 const paymentRoutes = require("./routes/payment");
 const reviewRoutes = require("./routes/review");
 const stockRoutes = require("./routes/stock");
+const cors = require("cors");
 
 // APP INITIALIZATION 
 const app = express();
@@ -27,11 +28,12 @@ db.on("error", (err) => console.error("Connection error:", err));
 db.once("open", () => console.log("Now connected to MongoDB Atlas."));
 
 // MIDDLEWARE
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: true
 }));
