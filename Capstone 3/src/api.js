@@ -138,4 +138,50 @@ export async function loadCatalogProducts(filters = {}) {
     return applyClientFilters(products, filters);
 }
 
+// ——— Admin: Products ———
+
+export async function getAllProducts() {
+    const { data } = await api.get("/products/all");
+    return Array.isArray(data) ? data : [];
+}
+
+export async function createProduct(productData) {
+    // productData: { name, description, price }
+    const { data } = await api.post("/products/", productData);
+    return data;
+}
+
+export async function updateProduct(productId, productData) {
+    // productData: { name?, description?, price? }
+    const { data } = await api.patch(`/products/${productId}/update`, productData);
+    return data;
+}
+
+export async function archiveProduct(productId) {
+    const { data } = await api.patch(`/products/${productId}/archive`);
+    return data;
+}
+
+export async function activateProduct(productId) {
+    const { data } = await api.patch(`/products/${productId}/activate`);
+    return data;
+}
+
+// ——— Admin: Stock ———
+
+export async function createStock(productId, quantity) {
+    const { data } = await api.post("/stocks/create-stock", { productId, quantity });
+    return data;
+}
+
+export async function updateStock(productId, quantity) {
+    const { data } = await api.put(`/stocks/update-stock/${productId}`, { quantity });
+    return data;
+}
+
+export async function getAllStock() {
+    const { data } = await api.get("/stocks/get-all-stocks");
+    return Array.isArray(data.stocks) ? data.stocks : [];
+}
+
 export default api;

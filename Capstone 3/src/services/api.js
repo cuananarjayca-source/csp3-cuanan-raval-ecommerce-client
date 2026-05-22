@@ -13,4 +13,14 @@ export {
     loadCatalogProducts,
     registerUser,
     loginUser,
+    // ——— Admin: Products ———
+    getAllProducts,
+    createProduct,
+    updateProduct,
+    archiveProduct,
+    activateProduct,
+    // ——— Admin: Stock ———
+    createStock,
+    updateStock,
+    getAllStock,
 } from "../api.js";

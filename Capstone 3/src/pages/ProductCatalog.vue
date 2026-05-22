@@ -34,7 +34,7 @@ const sortOptions = [
 ];
 
 function formatPrice(price) {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
+    return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" }).format(price);
 }
 
 function syncFiltersFromRoute() {
