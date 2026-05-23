@@ -3,132 +3,624 @@ import { ref, onMounted } from 'vue';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
 
-// *** UPDATED: added getAllStock to imports, merged into single import line ***
 import { getAllProducts, archiveProduct, activateProduct, getAllStock, getErrorMessage } from '../services/api.js';
 
 // ——— State ———
 const products = ref([]);
-const activeView = ref(null); // null | 'create' | 'update'
+const activeView = ref(null);
 const selectedProduct = ref(null);
-
-// *** NEW: stocks ref to hold all stock records ***
 const stocks = ref([]);
 
-// *** NEW: helper to match a product's stock quantity by productId ***
-function getStockForProduct(productId) {
-  const stock = stocks.value.find(s => s.productId._id === productId);
-  return stock ? stock.quantity : 'N/A';
+// Sidebar Toggle State
+const isSidebarOpen = ref(true);
+
+// ——— Helpers ———
+function toggleSidebar() {
+    isSidebarOpen.value = !isSidebarOpen.value;
 }
 
-// *** UPDATED: now fetches products and stocks in parallel ***
+function getStockForProduct(productId) {
+    const stock = stocks.value.find(s => s.productId._id === productId);
+    return stock ? stock.quantity : 'N/A';
+}
+
 async function loadProducts() {
-  try {
-    [products.value, stocks.value] = await Promise.all([
-      getAllProducts(),
-      getAllStock()
-    ]);
-  } catch (err) {
-    console.error('Failed to load data:', getErrorMessage(err));
-  }
+    try {
+        [products.value, stocks.value] = await Promise.all([
+            getAllProducts(),
+            getAllStock()
+        ]);
+    } catch (err) {
+        console.error('Failed to load data:', getErrorMessage(err));
+    }
 }
 
 // ——— View Switching ———
 function showView(view, product = null) {
-  activeView.value = view;
-  selectedProduct.value = product;
+    activeView.value = view;
+    selectedProduct.value = product;
 }
 
-// ——— Done handler (called when child emits 'done') ———
 async function onDone() {
-  showView(null);
-  await loadProducts();
+    showView(null);
+    await loadProducts();
 }
 
 // ——— Disable / Activate ———
 async function handleDisable(productId) {
-  try {
-    await archiveProduct(productId);
-    await loadProducts();
-  } catch (err) {
-    console.error('Failed to disable product:', getErrorMessage(err));
-  }
+    if(!confirm("Are you sure you want to disable this product?")) return;
+    try {
+        await archiveProduct(productId);
+        await loadProducts();
+    } catch (err) {
+        console.error('Failed to disable product:', getErrorMessage(err));
+    }
 }
 
 async function handleActivate(productId) {
-  try {
-    await activateProduct(productId);
-    await loadProducts();
-  } catch (err) {
-    console.error('Failed to activate product:', getErrorMessage(err));
-  }
+    if(!confirm("Are you sure you want to activate this product?")) return;
+    try {
+        await activateProduct(productId);
+        await loadProducts();
+    } catch (err) {
+        console.error('Failed to activate product:', getErrorMessage(err));
+    }
 }
 
 // ——— On Mount ———
-onMounted(loadProducts);
+onMounted(async () => {
+    // Automatically collapse sidebar on small screens
+    if (window.innerWidth <= 992) {
+        isSidebarOpen.value = false;
+    }
+    await loadProducts();
+});
 </script>
 
 <template>
-  <div class="container-fluid py-4">
+    <div class="admin-wrapper">
+        
+        <!-- ── SIDEBAR ── -->
+        <aside class="admin-sidebar" :class="{ 'closed': !isSidebarOpen }">
+            
+            <!-- Sidebar Header with Hamburger -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand" v-if="isSidebarOpen">
+                    <span class="brand-p">TARO</span><span class="brand-s">&nbsp;606</span>
+                </div>
+                <button class="toggle-btn" @click="toggleSidebar" aria-label="Toggle Sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" title="Products">
+                    <i class="bi bi-box-seam"></i> 
+                    <span class="nav-text">Products</span>
+                </a>
+                <a href="#" class="nav-item" title="Orders">
+                    <i class="bi bi-receipt"></i> 
+                    <span class="nav-text">Orders</span>
+                </a>
+                <a href="#" class="nav-item" title="Customers">
+                    <i class="bi bi-people"></i> 
+                    <span class="nav-text">Customers</span>
+                </a>
+                <a href="#" class="nav-item" title="Settings">
+                    <i class="bi bi-gear"></i> 
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
 
-    <!-- Top Action Buttons -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
-      <button class="btn btn-success" @click="showView('create')">Add Product</button>
-      <button class="btn btn-secondary">Orders</button>
+            <!-- Footer Profile -->
+            <div class="sidebar-footer">
+                <div class="admin-profile" title="Admin User">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="profile-text">Admin User</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── MAIN CONTENT ── -->
+        <main class="admin-main">
+            
+            <!-- Header Section -->
+            <header class="main-header">
+                <div class="header-titles">
+                    <h1 class="page-title">{{ activeView === null ? 'Product Management' : (activeView === 'create' ? 'Add New Product' : 'Update Product') }}</h1>
+                    <p class="page-sub">Manage your inventory, pricing, and stock levels.</p>
+                </div>
+                
+                <div v-if="activeView === null" class="header-actions">
+                    <button class="btn-ghost">
+                        <i class="bi bi-receipt"></i> View Orders
+                    </button>
+                    <button class="btn-primary" @click="showView('create')">
+                        <i class="bi bi-plus-lg"></i> Add Product
+                    </button>
+                </div>
+                <div v-else class="header-actions">
+                    <button class="btn-ghost" @click="showView(null)">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </button>
+                </div>
+            </header>
+
+            <!-- Table View -->
+            <div v-if="activeView === null" class="content-card">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th class="hide-mobile">Description</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th class="align-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in products" :key="product._id">
+                                <td class="fw-semibold text-dark">{{ product.name }}</td>
+                                <td class="hide-mobile text-muted truncate-text" title="product.description">
+                                    {{ product.description }}
+                               </td>
+                                <td class="fw-medium">₱{{ product.price }}</td>
+                                <td>
+                                    <span class="stock-indicator" :class="{ 'low-stock': getStockForProduct(product._id) < 10 }">
+                                        {{ getStockForProduct(product._id) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge" :class="product.isActive ? 'active' : 'inactive'">
+                                        {{ product.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="align-right">
+                                    <div class="action-group">
+                                        <button class="action-btn edit" @click="showView('update', product)" title="Edit Product">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button v-if="product.isActive" class="action-btn disable" @click="handleDisable(product._id)" title="Disable Product">
+                                            <i class="bi bi-archive"></i>
+                                        </button>
+                                        <button v-else class="action-btn activate" @click="handleActivate(product._id)" title="Activate Product">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-if="products.length === 0">
+                                <td colspan="6" class="empty-state">
+                                    <i class="bi bi-box"></i>
+                                    <p>No products found. Click "Add Product" to create one.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Create / Update Component Wrappers -->
+            <div v-if="activeView === 'create'" class="content-card form-wrapper">
+                <CreateProductComponent @done="onDone" />
+            </div>
+
+            <div v-if="activeView === 'update'" class="content-card form-wrapper">
+                <UpdateProductComponent
+                    :product="selectedProduct"
+                    :currentStock="getStockForProduct(selectedProduct._id)"
+                    @done="onDone"
+                />
+            </div>
+
+        </main>
     </div>
-
-    <!-- Product Table -->
-    <div v-if="activeView === null" class="table-responsive">
-      <table class="table table-bordered table-hover align-middle">
-        <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th class="d-none d-md-table-cell">Description</th>
-            <th>Price</th>
-            <!-- *** NEW: Stock column header, hidden on smallest screens *** -->
-            <th class="d-none d-sm-table-cell">Stock</th>
-            <th class="d-none d-sm-table-cell">Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="product in products" :key="product._id">
-            <td>{{ product.name }}</td>
-            <td class="d-none d-md-table-cell">{{ product.description }}</td>
-            <td>₱{{ product.price }}</td>
-            <!-- *** NEW: Stock quantity cell matched from stocks ref *** -->
-            <td class="d-none d-sm-table-cell">{{ getStockForProduct(product._id) }}</td>
-            <td class="d-none d-sm-table-cell">
-              <span :class="product.isActive ? 'badge bg-success' : 'badge bg-secondary'">
-                {{ product.isActive ? 'Active' : 'Inactive' }}
-              </span>
-            </td>
-            <td>
-              <div class="d-flex flex-wrap gap-1">
-                <button class="btn btn-primary btn-sm" @click="showView('update', product)">Update</button>
-                <button v-if="product.isActive" class="btn btn-danger btn-sm" @click="handleDisable(product._id)">Disable</button>
-                <button v-else class="btn btn-success btn-sm" @click="handleActivate(product._id)">Activate</button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Create Product Component -->
-    <div v-if="activeView === 'create'">
-      <button class="btn btn-secondary mb-3" @click="showView(null)">Back</button>
-      <CreateProductComponent @done="onDone" />
-    </div>
-
-    <!-- *** UPDATED: now passes stock quantity as prop to UpdateProductComponent *** -->
-    <div v-if="activeView === 'update'">
-      <button class="btn btn-secondary mb-3" @click="showView(null)">Back</button>
-      <UpdateProductComponent
-        :product="selectedProduct"
-        :currentStock="getStockForProduct(selectedProduct._id)"
-        @done="onDone"
-      />
-    </div>
-
-  </div>
 </template>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+
+/* ── LAYOUT ── */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #faf9fc;
+    font-family: 'Inter', sans-serif;
+    padding-top: 90px;
+    flex-direction: row; /* Keep rows side-by-side */
+}
+
+/* ── SIDEBAR ── */
+.admin-sidebar {
+    width: 260px;
+    background: #3d0300;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    /* REMOVED fixed positioning so it pushes the footer down */
+    position: relative; 
+    min-height: 100vh;
+    z-index: 10;
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* Mini-sidebar when closed */
+.admin-sidebar.closed {
+    width: 80px;
+}
+
+/* Sidebar Header with Hamburger */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.25rem;
+    height: 80px;
+}
+
+.admin-sidebar.closed .sidebar-header {
+    justify-content: center;
+}
+
+.sidebar-brand {
+    font-family: 'Yanone Kaffeesatz', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.brand-p { color: #ffffff; }
+.brand-s { color: #ee807b; }
+
+/* Ensure the hamburger button is ALWAYS visible */
+.toggle-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.toggle-btn:hover {
+    color: #ee807b;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 1rem;
+}
+
+.admin-sidebar.closed .sidebar-nav {
+    padding: 0 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    color: #d1d5db;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-item i {
+    font-size: 1.3rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.nav-item.active {
+    background: rgba(238, 128, 123, 0.15);
+    color: #ee807b;
+    font-weight: 600;
+}
+
+.admin-sidebar.closed .nav-item {
+    justify-content: center;
+    padding: 0.85rem 0;
+}
+
+.admin-sidebar.closed .nav-text {
+    display: none;
+}
+
+.sidebar-footer {
+    padding: 1.5rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #e5e7eb;
+    white-space: nowrap;
+}
+
+.admin-profile i {
+    font-size: 1.5rem;
+    color: #ee807b;
+}
+
+.admin-sidebar.closed .sidebar-footer {
+    padding: 1.5rem 0;
+}
+
+.admin-sidebar.closed .admin-profile {
+    justify-content: center;
+}
+
+.admin-sidebar.closed .profile-text {
+    display: none;
+}
+
+/* ── MAIN CONTENT ── */
+.admin-main {
+    flex: 1;
+    padding: 2.5rem 3rem;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-title {
+    font-family: 'Yanone Kaffeesatz', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.2rem 0;
+}
+
+.page-sub {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+    background: #3d0300;
+    color: #ffffff;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #ee807b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(238, 128, 123, 0.3);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #3d0300;
+    border: 1.5px solid #d1d5db;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+    border-color: #3d0300;
+    background: rgba(61, 3, 0, 0.04);
+}
+
+/* ── CARDS & TABLES ── */
+.content-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    padding: 0;
+    overflow: hidden;
+}
+
+.form-wrapper {
+    padding: 2rem;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th {
+    background: #ffffff;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.admin-table td {
+    padding: 1.2rem 1.5rem;
+    font-size: 0.9rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+
+/* ── ZEBRA STRIPING & HOVER ── */
+.admin-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Subtle alternate gray background */
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f1f5f9; /* Slightly darker gray on hover */
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.truncate-text {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-dark { color: #1a1a1a; }
+.text-muted { color: #6b7280; }
+.fw-semibold { font-weight: 600; }
+.fw-medium { font-weight: 500; }
+.align-right { text-align: right; }
+
+/* ── STATUS & STOCK ── */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* NEW COLOR CODING FOR STATUS BADGES */
+.status-badge.active {
+    background: #d1fae5; /* Soft emerald green */
+    color: #059669;      /* Deep emerald green */
+}
+
+.status-badge.inactive {
+    background: #fee2e2; /* Soft red */
+    color: #dc2626;      /* Deep red */
+}
+
+.stock-indicator {
+    font-weight: 600;
+}
+.stock-indicator.low-stock {
+    color: #ef4444; 
+}
+
+/* ── ACTION BUTTONS ── */
+.action-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+}
+
+.action-btn.edit:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+.action-btn.disable:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+.action-btn.activate:hover { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem !important;
+    color: #9ca3af;
+    background: #ffffff !important;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #e5e7eb;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* ── RESPONSIVENESS ── */
+@media (max-width: 992px) {
+    .admin-wrapper {
+        padding-top: 80px;
+        /* Keep it as a row so the sidebar sits to the left of the content */
+        flex-direction: row;
+    }
+
+    /* Force the sidebar to never disappear */
+    .admin-sidebar {
+        position: relative;
+        /* It will now push the footer down because it is relative */
+    }
+    
+    /* When closed, it just shrinks, it doesn't vanish */
+    .admin-sidebar.closed {
+        width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hide-mobile { display: none; }
+    .main-header { flex-direction: column; align-items: flex-start; }
+    .header-actions { width: 100%; justify-content: space-between; }
+}
+</style>
