@@ -91,7 +91,7 @@ module.exports.searchProductByRating = (req, res) => {
 // ADMIN LEVEL ACCESS
 
 module.exports.createProduct = (req, res) => {
-    const { name, description, price } = req.body;
+    const { name, description, price, imageUrl } = req.body;
 
     if (!name) {
         return res.status(400).send({ message: "Product name is required" });
@@ -106,7 +106,8 @@ module.exports.createProduct = (req, res) => {
     const product = new Product({
         name,
         description,
-        price
+        price,
+        imageUrl: imageUrl || null
     });
 
     return product.save()
@@ -124,8 +125,8 @@ module.exports.getAllProduct = (req, res) => {
 };
 
 module.exports.updateProduct = (req, res) => {
-    const { name, description, price } = req.body;
-
+    const { name, description, price, imageUrl } = req.body;
+    
     return Product.findById(req.params.productId)
         .then((result) => {
             if (!result) {
@@ -138,6 +139,7 @@ module.exports.updateProduct = (req, res) => {
             result.name = name ?? result.name;
             result.description = description ?? result.description;
             result.price = price ?? result.price;
+            result.imageUrl = imageUrl ?? result.imageUrl;
 
             return result.save()
                 .then((updated) => res.status(200).send({
