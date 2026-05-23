@@ -23,4 +23,6 @@ export {
     createStock,
     updateStock,
     getAllStock,
+    // ——— Cloudinary ———
+    uploadImage,
 } from "../api.js";

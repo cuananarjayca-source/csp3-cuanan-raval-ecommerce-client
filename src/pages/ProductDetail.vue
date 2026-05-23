@@ -41,8 +41,8 @@ watch(() => props.id, load);
         </div>
         <div v-else-if="error" class="alert alert-warning">{{ error }}</div>
         <div v-else-if="product" class="row g-4">
-            <div class="col-md-6" v-if="product.images?.[0]">
-                <img :src="product.images[0]" :alt="product.name" class="img-fluid rounded border" />
+            <div class="col-md-6" v-if="product.imageUrl">
+                <img :src="product.imageUrl" :alt="product.name" class="img-fluid rounded border" />
             </div>
             <div class="col-md-6">
                 <span class="badge text-bg-secondary">{{ product.category }}</span>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { createProduct, createStock, getErrorMessage } from '../services/api.js';
+import { createProduct, createStock, uploadImage, getErrorMessage } from '../services/api.js';
 import { Notyf } from 'notyf'; // 1. Import Notyf
 
 // 2. Initialize Notyf with configuration
@@ -11,6 +11,9 @@ const notyf = new Notyf({
         y: 'top',
     }
 });
+
+const imageFile = ref(null);
+const imagePreview = ref(null);
 
 // ——— Emits ———
 const emit = defineEmits(['done']);
@@ -37,35 +40,41 @@ const isFormValid = computed(() => {
            quantity.value !== '' && !isQuantityInvalid.value;
 });
 
-// ——— Submit ———
+function handleImageChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  imageFile.value = file;
+  imagePreview.value = URL.createObjectURL(file);
+}
+
 async function handleSubmit() {
-    if (!isFormValid.value) return;
-    
-    error.value = null;
-    loading.value = true;
+  error.value = null;
+  loading.value = true;
 
-    try {
-        // Step 1: Create the product
-        const result = await createProduct({
-            name: name.value.trim(),
-            description: description.value.trim(),
-            price: Number(price.value),
-        });
-
-        // Step 2: Create stock using the returned product ID
-        await createStock(result.product._id, Number(quantity.value));
-
-        // 3. Trigger the success toast!
-        notyf.success("Product added successfully!");
-        
-        emit('done');
-    } catch (err) {
-        const errorMsg = getErrorMessage(err, 'Failed to create product');
-        error.value = errorMsg;
-        notyf.error(errorMsg); // Optional: Also throw an error toast
-    } finally {
-        loading.value = false;
+  try {
+    // Step 1: Upload image to Cloudinary if a file was selected
+    let imageUrl = null;
+    if (imageFile.value) {
+      imageUrl = await uploadImage(imageFile.value);
     }
+
+    // Step 2: Create the product with the image URL
+    const result = await createProduct({
+      name: name.value,
+      description: description.value,
+      price: Number(price.value),
+      imageUrl
+    });
+
+    // Step 3: Create stock
+    await createStock(result.product._id, Number(quantity.value));
+
+    emit('done');
+  } catch (err) {
+    error.value = getErrorMessage(err, 'Failed to create product');
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -154,6 +163,22 @@ async function handleSubmit() {
                         <i class="bi bi-exclamation-circle"></i> Must be a valid whole number
                     </p>
                 </div>
+            </div>
+
+            <div class="field-group">
+                <label for="image" class="field-label">Product Image (optional)</label>
+                <input 
+                    id="image" 
+                    type="file" 
+                    accept="image/*" 
+                    class="field-input"
+                    style="padding-top: 14px;"
+                    @change="handleImageChange" 
+                />
+            </div>
+
+            <div v-if="imagePreview" style="margin-top: -0.5rem;">
+                <img :src="imagePreview" alt="Image preview" style="max-width: 100%; border-radius: 12px; max-height: 200px; object-fit: cover;" />
             </div>
 
             <!-- Action Buttons -->

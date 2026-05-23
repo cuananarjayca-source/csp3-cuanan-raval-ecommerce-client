@@ -160,6 +160,7 @@ onMounted(async () => {
                 <div v-else class="row g-3">
                     <div v-for="product in products" :key="product._id" class="col-md-6 col-xl-4">
                         <div class="card h-100">
+                            <img v-if="product.imageUrl" :src="product.imageUrl" :alt="product.name" class="card-img-top" style="height: 200px; object-fit: cover;" />
                             <div class="card-body">
                                 <span class="badge text-bg-secondary mb-2">{{ product.category }}</span>
                                 <h2 class="h6 card-title">{{ product.name }}</h2>

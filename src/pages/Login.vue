@@ -66,7 +66,7 @@ onBeforeMount(() => {
                 <!-- Beverage Can SVG -->
                 <!-- Replace the entire can-wrapper div in the hero-content -->
                 <div class="hero-img-wrapper">
-                    <img src="/images/cookies-and-cream-hero.png" alt="Cookies and Cream 606 Can" class="hero-img" />
+                    <img src="../assets/images/cookies-and-cream-hero.png" alt="Cookies and Cream 606 Can" class="hero-img" />
                 </div>
 
                 <!-- Hero text below can -->

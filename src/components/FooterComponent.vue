@@ -4,7 +4,7 @@
             <!-- Brand Column -->
             <div class="footer-col brand-col">
                 <h3 class="brand-tagline">TASTE IS BETTER</h3>
-                <img src="/images/taro-logo.png" alt="Taro 606 Logo" class="footer-logo" />
+                <img src="../assets/images/taro-logo.png" alt="Taro 606 Logo" class="footer-logo" />
             </div>
 
             <!-- Address Column -->
@@ -45,7 +45,7 @@
                     <i class="bi bi-tiktok"></i>
                 </div>
                 <p class="scan-text">Scan Me!</p>
-                <img src="/images/taro-qr.png" alt="Taro QR Code" class="qr-code" />
+                <img src="../assets/images/taro-qr.png" alt="Taro QR Code" class="qr-code" />
             </div>
         </div>
 

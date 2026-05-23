@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { updateProduct, updateStock, createStock, getErrorMessage } from '../services/api.js';
+import { updateProduct, updateStock, uploadImage, createStock, getErrorMessage } from '../services/api.js';
 import { Notyf } from 'notyf';
 
 const notyf = new Notyf({ duration: 3000, position: { x: 'right', y: 'top' } });
@@ -12,6 +12,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['done']);
+const imageFile = ref(null);
+const imagePreview = ref(null);
 
 // ——— Form State ———
 const name = ref('');
@@ -40,6 +42,8 @@ watch(() => props.product, (val) => {
     name.value = val.name;
     description.value = val.description;
     price.value = val.price;
+    // *** NEW: pre-fill existing image as preview ***
+    imagePreview.value = val.imageUrl || null;
   }
 }, { immediate: true });
 
@@ -47,33 +51,43 @@ watch(() => props.currentStock, (val) => {
   quantity.value = val === 'N/A' ? 0 : val;
 }, { immediate: true });
 
+function handleImageChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  imageFile.value = file;
+  imagePreview.value = URL.createObjectURL(file);
+}
+
+
 // ——— Submit ———
 async function handleSubmit() {
-  if (!isFormValid.value) return;
-  
   error.value = null;
   loading.value = true;
 
   try {
+    // *** NEW: upload new image if admin picked one, otherwise keep existing ***
+    let imageUrl = props.product.imageUrl || null;
+    if (imageFile.value) {
+      imageUrl = await uploadImage(imageFile.value);
+    }
+
     const stockPromise = props.currentStock === 'N/A'
       ? createStock(props.product._id, Number(quantity.value))
       : updateStock(props.product._id, Number(quantity.value));
 
     await Promise.all([
       updateProduct(props.product._id, {
-        name: name.value.trim(),
-        description: description.value.trim(),
+        name: name.value,
+        description: description.value,
         price: Number(price.value),
+        imageUrl
       }),
       stockPromise
     ]);
 
-    notyf.success("Product updated successfully!");
     emit('done');
   } catch (err) {
-    const errorMsg = getErrorMessage(err, 'Failed to update product');
-    error.value = errorMsg;
-    notyf.error(errorMsg);
+    error.value = getErrorMessage(err, 'Failed to update product');
   } finally {
     loading.value = false;
   }
@@ -116,6 +130,15 @@ async function handleSubmit() {
                 <input id="quantity" v-model="quantity" type="number" class="field-input" :class="{ 'input-error': isQuantityInvalid }" min="0" required />
                 <p v-if="isQuantityInvalid" class="error-msg"><i class="bi bi-exclamation-circle"></i> Must be a valid number</p>
             </div>
+        </div>
+        <div>
+          <label for="image">Product Image (optional)</label>
+          <input id="image" type="file" accept="image/*" @change="handleImageChange" />
+        </div>
+
+        <!-- Shows existing image or new preview -->
+        <div v-if="imagePreview">
+          <img :src="imagePreview" alt="Image preview" />
         </div>
 
         <div class="form-actions">
