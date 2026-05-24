@@ -19,8 +19,8 @@
                 <ul>
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/products">Products</RouterLink></li>
-                    <li><RouterLink to="/policies">Policies</RouterLink></li>
-                    <li><RouterLink to="/faq">Frequently Asked Questions</RouterLink></li>
+                    <li><a href="#">Policies</a></li>
+                    <li><a href="#">Frequently Asked Questions</a></li>
                 </ul>
             </div>
 
@@ -28,9 +28,9 @@
             <div class="footer-col">
                 <h5>About us</h5>
                 <ul>
-                    <li><RouterLink to="/blog">Blog Posts</RouterLink></li>
-                    <li><RouterLink to="/careers">Careers</RouterLink></li>
-                    <li><RouterLink to="/deals">Flash Deals</RouterLink></li>
+                    <li><a href="#">Blog Posts</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Flash Deals</a></li>
                 </ul>
             </div>
 

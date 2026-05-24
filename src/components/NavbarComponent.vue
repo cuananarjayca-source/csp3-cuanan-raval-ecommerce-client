@@ -81,9 +81,9 @@ const closeDropdown = () => {
         <ul class="offcanvas-nav">
             <li><RouterLink to="/" @click="closeOffcanvas">Home</RouterLink></li>
             <li><RouterLink to="/products" @click="closeOffcanvas">Products</RouterLink></li>
-            <li><RouterLink to="/our-story" @click="closeOffcanvas">Our Story</RouterLink></li>
-            <li><RouterLink to="/review" @click="closeOffcanvas">Review</RouterLink></li>
-            <li><RouterLink to="/contact" @click="closeOffcanvas">Contact Us</RouterLink></li>
+            <li><a href="#" @click="closeOffcanvas">Our Story</a></li>
+            <li><a href="#" @click="closeOffcanvas">Review</a></li>
+            <li><a href="#" @click="closeOffcanvas">Contact Us</a></li>
             <li v-if="!isAuthenticated">
                 <RouterLink to="/login" @click="closeOffcanvas">Login</RouterLink>
             </li>
@@ -109,9 +109,9 @@ const closeDropdown = () => {
                 <ul class="nav-links d-none d-lg-flex">
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/products">Products</RouterLink></li>
-                    <li><RouterLink to="/our-story">Our Story</RouterLink></li>
-                    <li><RouterLink to="/review">Review</RouterLink></li>
-                    <li><RouterLink to="/contact">Contact Us</RouterLink></li>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Review</a></li>
+                    <li><a href="#">Contact Us</a></li>
                 </ul>
 
                 <!-- Mobile Hamburger -->
@@ -135,9 +135,9 @@ const closeDropdown = () => {
             <!-- RIGHT: Cart + Auth Links / Profile -->
             <div class="nav-right">
                 <!-- Cart Icon -->
-                <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
+                <a href="#" class="icon-btn" aria-label="Cart">
                     <i class="bi bi-cart-fill"></i>
-                </RouterLink>
+                </a>
 
                 <!-- Unauthenticated: Login + Register styled links -->
                 <template v-if="!isAuthenticated">
@@ -172,14 +172,14 @@ const closeDropdown = () => {
 
                                 <div class="dropdown-divider"></div>
 
-                                <RouterLink to="/profile" class="dropdown-item" @click="closeDropdown">
-                                    <i class="bi bi-person"></i>
-                                    View Profile
-                                </RouterLink>
-                                <RouterLink to="/account/security" class="dropdown-item" @click="closeDropdown">
-                                    <i class="bi bi-shield-lock"></i>
-                                    Account Security Settings
-                                </RouterLink>
+                               <a href="#" class="dropdown-item" @click="closeDropdown">
+                                   <i class="bi bi-person"></i>
+                                   View Profile
+                               </a>
+                               <a href="#" class="dropdown-item" @click="closeDropdown">
+                                   <i class="bi bi-shield-lock"></i>
+                                   Account Security Settings
+                               </a>
                                 <RouterLink
                                   v-if="user?.isAdmin"
                                   to="/admin/dashboard"
@@ -189,10 +189,10 @@ const closeDropdown = () => {
                                   <i class="bi bi-speedometer2"></i>
                                   Admin Dashboard
                                 </RouterLink>
-                                <RouterLink to="/faq" class="dropdown-item" @click="closeDropdown">
+                                <a href="#" class="dropdown-item" @click="closeDropdown">
                                     <i class="bi bi-question-circle"></i>
                                     Help / FAQ
-                                </RouterLink>
+                                </a>
 
                                 <div class="dropdown-divider"></div>
 
