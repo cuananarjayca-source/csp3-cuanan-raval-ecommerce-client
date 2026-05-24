@@ -209,4 +209,26 @@ export async function uploadImage(file) {
     return data.secure_url;
 }
 
+// ——— Cart ———
+
+export async function getCart() {
+    const { data } = await api.get("/cart/get-cart");
+    return data?.cart ?? null;
+}
+
+export async function addToCart(productId, quantity) {
+    const { data } = await api.post("/cart/add-to-cart", { productId, quantity });
+    return data;
+}
+
+export async function updateCartQuantity(productId, newQuantity) {
+    const { data } = await api.patch("/cart/update-cart-quantity", { productId, newQuantity });
+    return data;
+}
+
+export async function removeFromCart(productId) {
+    const { data } = await api.patch(`/cart/${productId}/remove-from-cart`);
+    return data;
+}
+
 export default api;
