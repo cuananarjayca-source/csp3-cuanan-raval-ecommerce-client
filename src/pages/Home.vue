@@ -1,99 +1,80 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
-import { getActiveProducts, extractCategories, applyClientFilters } from "../api.js";
+import BannerComponent from "../components/BannerComponent.vue";
 
-const featuredProducts = ref([]);
-const products = ref([]);
-const categories = ref([]);
-const loading = ref(true);
-const error = ref(null);
+onMounted(() => {
 
-function productImage(product) {
-    return product?.images?.[0] || null;
-}
-
-function formatPrice(price) {
-    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
-}
-
-onMounted(async () => {
-    try {
-        const active = await getActiveProducts();
-        featuredProducts.value = applyClientFilters(active, { featured: true, sort: "newest" });
-        products.value = applyClientFilters(active, { sort: "newest" }).slice(0, 8);
-        categories.value = extractCategories(active);
-    } catch (e) {
-        error.value = "Could not load products. Is the API running on port 4000?";
-        console.error(e);
-    } finally {
-        loading.value = false;
-    }
-});
+  if (window.lucide) {
+    window.lucide.createIcons()
+  }
+})
 </script>
 
 <template>
-    <div class="container py-4">
-        <div class="p-4 mb-4 bg-light rounded border">
-            <h1 class="display-6">Taro606</h1>
-            <p class="lead mb-3">Premium canned milk teas and lattes.</p>
-            <RouterLink to="/products" class="btn btn-primary">Browse products</RouterLink>
-        </div>
+  <div class="min-h-screen overflow-hidden relative main-wrapper">
+    <!-- Floating Background Elements -->
+    <div class="wave-bg"></div>
 
-        <section class="mb-4">
-            <h2 class="h4">Featured products</h2>
-            <div v-if="loading" class="text-center py-4">
-                <div class="spinner-border text-primary" role="status"></div>
-            </div>
-            <div v-else-if="error" class="alert alert-warning">{{ error }}</div>
-            <div v-else-if="!featuredProducts.length" class="alert alert-info">No featured products.</div>
-            <div v-else class="row g-3">
-                <div v-for="product in featuredProducts" :key="product._id" class="col-md-4">
-                    <div class="card h-100">
-                        <img
-                            v-if="productImage(product)"
-                            :src="productImage(product)"
-                            :alt="product.name"
-                            class="card-img-top"
-                        />
-                        <div class="card-body">
-                            <h3 class="card-title h6">{{ product.name }}</h3>
-                            <p class="card-text small">{{ product.description }}</p>
-                            <p class="fw-bold">{{ formatPrice(product.price) }}</p>
-                            <RouterLink :to="`/products/${product._id}`" class="btn btn-sm btn-primary">Details</RouterLink>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Nav -->
+    <header class="relative z-20">
+      <nav class="p-4">
+        <!-- Your navigation content goes here -->
+      </nav>
+    </header>
 
-        <section class="mb-4">
-            <h2 class="h4">Products</h2>
-            <div v-if="!loading && products.length" class="row g-3">
-                <div v-for="product in products" :key="product._id" class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h3 class="h6">{{ product.name }}</h3>
-                            <p class="small text-muted">{{ product.category }}</p>
-                            <RouterLink :to="`/products/${product._id}`" class="btn btn-sm btn-outline-primary">View</RouterLink>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2 class="h4">Categories</h2>
-            <div class="list-group">
-                <RouterLink
-                    v-for="cat in categories"
-                    :key="cat"
-                    :to="{ path: '/products', query: { category: cat } }"
-                    class="list-group-item list-group-item-action"
-                >
-                    {{ cat }}
-                </RouterLink>
-            </div>
-        </section>
-    </div>
+    <!-- Main Content Layout Holder -->
+    <main class="relative z-10">
+      <!-- Add your core page content here -->
+      <BannerComponent />
+    </main>
+  </div>
 </template>
+
+
+<style scoped>
+/* Scoped styles target only this component and keep your global CSS clean */
+.main-wrapper {
+  background: linear-gradient(rgb(253, 232, 228), rgb(249, 201, 187));
+  font-family: 'Inter', sans-serif;
+}
+
+/* Typography Overrides */
+:deep(h2), :deep(h3), :deep(h4), :deep(h5), :deep(h6), .font-display {
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+}
+
+.font-cta {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Background Wave Vector Styling */
+.wave-bg {
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  height: 40%;
+  background: linear-gradient(135deg, #c0392b33 0%, #e8a09033 50%, #f5cdc033 100%);
+  border-radius: 60% 80% 0 0 / 100% 100% 0 0;
+  z-index: 1;
+}
+
+/* Custom Floating Animations */
+.float-1 { animation: float1 4s ease-in-out infinite; }
+.float-2 { animation: float2 5s ease-in-out infinite; }
+.float-3 { animation: float3 3.5s ease-in-out infinite; }
+
+@keyframes float1 { 
+  0%, 100% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(-12px) rotate(5deg); } 
+}
+@keyframes float2 { 
+  0%, 100% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(-18px) rotate(-8deg); } 
+}
+@keyframes float3 { 
+  0%, 100% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(-10px) rotate(10deg); } 
+}
+</style>
