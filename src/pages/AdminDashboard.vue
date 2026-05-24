@@ -1,51 +1,100 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
-
 import { getAllProducts, archiveProduct, activateProduct, getAllStock, getErrorMessage } from '../services/api.js';
-
 // ——— State ———
 const products = ref([]);
 const activeView = ref(null);
 const selectedProduct = ref(null);
 const stocks = ref([]);
-
 // Sidebar Toggle State
 const isSidebarOpen = ref(true);
-
+// Pagination State
+const currentPage = ref(1);
+const itemsPerPage = 10;
 // ——— Helpers ———
 function toggleSidebar() {
     isSidebarOpen.value = !isSidebarOpen.value;
 }
-
 function getStockForProduct(productId) {
     const stock = stocks.value.find(s => s.productId._id === productId);
     return stock ? stock.quantity : 'N/A';
 }
-
 async function loadProducts() {
     try {
         [products.value, stocks.value] = await Promise.all([
             getAllProducts(),
             getAllStock()
         ]);
+        // Reset to page 1 when data reloads
+        currentPage.value = 1;
     } catch (err) {
         console.error('Failed to load data:', getErrorMessage(err));
     }
 }
+// ——— Pagination ———
+const totalPages = computed(() => Math.ceil(products.value.length / itemsPerPage));
+const visiblePages = computed(() => {
+    const total = totalPages.value;
+    const current = currentPage.value;
+    
+    if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    
+    const pages = [];
+    
+    pages.push(1);
+    
+    if (current > 4) {
+        pages.push('...');
+    }
+    
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 1, current + 1);
+    
+    for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) {
+            pages.push(i);
+        }
+    }
+    
+    if (current < total - 3) {
+        pages.push('...');
+    }
+    
+    if (!pages.includes(total)) {
+        pages.push(total);
+    }
+    
+    return pages;
+});
 
+const paginatedProducts = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage;
+    return products.value.slice(start, start + itemsPerPage);
+});
+function goToPage(page) {
+    if (typeof page === 'number' && page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
+}
+function prevPage() {
+    goToPage(currentPage.value - 1);
+}
+function nextPage() {
+    goToPage(currentPage.value + 1);
+}
 // ——— View Switching ———
 function showView(view, product = null) {
     activeView.value = view;
     selectedProduct.value = product;
 }
-
 async function onDone() {
     showView(null);
     await loadProducts();
 }
-
 // ——— Disable / Activate ———
 async function handleDisable(productId) {
     if(!confirm("Are you sure you want to disable this product?")) return;
@@ -56,7 +105,6 @@ async function handleDisable(productId) {
         console.error('Failed to disable product:', getErrorMessage(err));
     }
 }
-
 async function handleActivate(productId) {
     if(!confirm("Are you sure you want to activate this product?")) return;
     try {
@@ -66,10 +114,8 @@ async function handleActivate(productId) {
         console.error('Failed to activate product:', getErrorMessage(err));
     }
 }
-
 // ——— On Mount ———
 onMounted(async () => {
-    // Automatically collapse sidebar on small screens
     if (window.innerWidth <= 992) {
         isSidebarOpen.value = false;
     }
@@ -112,7 +158,6 @@ onMounted(async () => {
                     <span class="nav-text">Settings</span>
                 </a>
             </nav>
-
             <!-- Footer Profile -->
             <div class="sidebar-footer">
                 <div class="admin-profile" title="Admin User">
@@ -121,7 +166,6 @@ onMounted(async () => {
                 </div>
             </div>
         </aside>
-
         <!-- ── MAIN CONTENT ── -->
         <main class="admin-main">
             
@@ -146,7 +190,6 @@ onMounted(async () => {
                     </button>
                 </div>
             </header>
-
             <!-- Table View -->
             <div v-if="activeView === null" class="content-card">
                 <div class="table-responsive">
@@ -162,9 +205,9 @@ onMounted(async () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="product in products" :key="product._id">
+                            <tr v-for="product in paginatedProducts" :key="product._id">
                                 <td class="fw-semibold text-dark">{{ product.name }}</td>
-                                <td class="hide-mobile text-muted truncate-text" title="product.description">
+                                <td class="hide-mobile text-muted truncate-text" :title="product.description">
                                     {{ product.description }}
                                </td>
                                 <td class="fw-medium">₱{{ product.price }}</td>
@@ -201,13 +244,43 @@ onMounted(async () => {
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination -->
+                <div v-if="totalPages > 1" class="pagination">
+                    <button 
+                        class="page-btn" 
+                        :disabled="currentPage === 1" 
+                        @click="prevPage"
+                    >
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    
+                    <div class="page-numbers">
+                        <template v-for="(page, index) in visiblePages" :key="index">
+                            <span v-if="page === '...'" class="page-ellipsis">…</span>
+                            <button 
+                                v-else
+                                class="page-num"
+                                :class="{ active: page === currentPage }"
+                                @click="goToPage(page)"
+                            >
+                                {{ page }}
+                            </button>
+                        </template>
+                    </div>
+                    
+                    <button 
+                        class="page-btn" 
+                        :disabled="currentPage === totalPages" 
+                        @click="nextPage"
+                    >
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
             </div>
-
             <!-- Create / Update Component Wrappers -->
             <div v-if="activeView === 'create'" class="content-card form-wrapper">
                 <CreateProductComponent @done="onDone" />
             </div>
-
             <div v-if="activeView === 'update'" class="content-card form-wrapper">
                 <UpdateProductComponent
                     :product="selectedProduct"
@@ -215,14 +288,11 @@ onMounted(async () => {
                     @done="onDone"
                 />
             </div>
-
         </main>
     </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 /* ── LAYOUT ── */
 .admin-wrapper {
@@ -231,9 +301,8 @@ onMounted(async () => {
     background: #faf9fc;
     font-family: 'Inter', sans-serif;
     padding-top: 90px;
-    flex-direction: row; /* Keep rows side-by-side */
+    flex-direction: row;
 }
-
 /* ── SIDEBAR ── */
 .admin-sidebar {
     width: 260px;
@@ -242,20 +311,15 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    /* REMOVED fixed positioning so it pushes the footer down */
     position: relative; 
     min-height: 100vh;
     z-index: 10;
     transition: width 0.3s ease;
     overflow-x: hidden;
 }
-
-/* Mini-sidebar when closed */
 .admin-sidebar.closed {
     width: 80px;
 }
-
-/* Sidebar Header with Hamburger */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -263,11 +327,9 @@ onMounted(async () => {
     padding: 1.5rem 1.25rem;
     height: 80px;
 }
-
 .admin-sidebar.closed .sidebar-header {
     justify-content: center;
 }
-
 .sidebar-brand {
     font-family: 'Yanone Kaffeesatz', sans-serif;
     font-size: 2.2rem;
@@ -276,11 +338,8 @@ onMounted(async () => {
     line-height: 1;
     white-space: nowrap;
 }
-
 .brand-p { color: #ffffff; }
 .brand-s { color: #ee807b; }
-
-/* Ensure the hamburger button is ALWAYS visible */
 .toggle-btn {
     background: transparent;
     border: none;
@@ -292,11 +351,9 @@ onMounted(async () => {
     justify-content: center;
     padding: 0;
 }
-
 .toggle-btn:hover {
     color: #ee807b;
 }
-
 .sidebar-nav {
     flex: 1;
     display: flex;
@@ -304,11 +361,9 @@ onMounted(async () => {
     gap: 0.5rem;
     padding: 0 1rem;
 }
-
 .admin-sidebar.closed .sidebar-nav {
     padding: 0 0.5rem;
 }
-
 .nav-item {
     display: flex;
     align-items: center;
@@ -322,38 +377,31 @@ onMounted(async () => {
     transition: all 0.2s ease;
     white-space: nowrap;
 }
-
 .nav-item i {
     font-size: 1.3rem;
     min-width: 24px;
     text-align: center;
 }
-
 .nav-item:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
 }
-
 .nav-item.active {
     background: rgba(238, 128, 123, 0.15);
     color: #ee807b;
     font-weight: 600;
 }
-
 .admin-sidebar.closed .nav-item {
     justify-content: center;
     padding: 0.85rem 0;
 }
-
 .admin-sidebar.closed .nav-text {
     display: none;
 }
-
 .sidebar-footer {
     padding: 1.5rem 1.25rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .admin-profile {
     display: flex;
     align-items: center;
@@ -363,24 +411,19 @@ onMounted(async () => {
     color: #e5e7eb;
     white-space: nowrap;
 }
-
 .admin-profile i {
     font-size: 1.5rem;
     color: #ee807b;
 }
-
 .admin-sidebar.closed .sidebar-footer {
     padding: 1.5rem 0;
 }
-
 .admin-sidebar.closed .admin-profile {
     justify-content: center;
 }
-
 .admin-sidebar.closed .profile-text {
     display: none;
 }
-
 /* ── MAIN CONTENT ── */
 .admin-main {
     flex: 1;
@@ -388,7 +431,6 @@ onMounted(async () => {
     overflow-y: auto;
     transition: width 0.3s ease;
 }
-
 .main-header {
     display: flex;
     justify-content: space-between;
@@ -397,7 +439,6 @@ onMounted(async () => {
     flex-wrap: wrap;
     gap: 1rem;
 }
-
 .page-title {
     font-family: 'Yanone Kaffeesatz', sans-serif;
     font-size: 2.5rem;
@@ -405,18 +446,15 @@ onMounted(async () => {
     color: #1a1a1a;
     margin: 0 0 0.2rem 0;
 }
-
 .page-sub {
     font-size: 0.9rem;
     color: #6b7280;
     margin: 0;
 }
-
 .header-actions {
     display: flex;
     gap: 1rem;
 }
-
 /* ── BUTTONS ── */
 .btn-primary {
     background: #3d0300;
@@ -432,13 +470,11 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .btn-primary:hover {
     background: #ee807b;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(238, 128, 123, 0.3);
 }
-
 .btn-ghost {
     background: transparent;
     color: #3d0300;
@@ -453,12 +489,10 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .btn-ghost:hover {
     border-color: #3d0300;
     background: rgba(61, 3, 0, 0.04);
 }
-
 /* ── CARDS & TABLES ── */
 .content-card {
     background: #ffffff;
@@ -467,22 +501,18 @@ onMounted(async () => {
     padding: 0;
     overflow: hidden;
 }
-
 .form-wrapper {
     padding: 2rem;
 }
-
 .table-responsive {
     width: 100%;
     overflow-x: auto;
 }
-
 .admin-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
 }
-
 .admin-table th {
     background: #ffffff;
     padding: 1.2rem 1.5rem;
@@ -493,7 +523,6 @@ onMounted(async () => {
     color: #6b7280;
     border-bottom: 2px solid #f3f4f6;
 }
-
 .admin-table td {
     padding: 1.2rem 1.5rem;
     font-size: 0.9rem;
@@ -501,33 +530,26 @@ onMounted(async () => {
     border-bottom: 1px solid #f3f4f6;
     vertical-align: middle;
 }
-
-/* ── ZEBRA STRIPING & HOVER ── */
 .admin-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa; /* Subtle alternate gray background */
+    background-color: #f8f9fa;
 }
-
 .admin-table tbody tr:hover {
-    background-color: #f1f5f9; /* Slightly darker gray on hover */
+    background-color: #f1f5f9;
 }
-
 .admin-table tbody tr:last-child td {
     border-bottom: none;
 }
-
 .truncate-text {
     max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .text-dark { color: #1a1a1a; }
 .text-muted { color: #6b7280; }
 .fw-semibold { font-weight: 600; }
 .fw-medium { font-weight: 500; }
 .align-right { text-align: right; }
-
 /* ── STATUS & STOCK ── */
 .status-badge {
     display: inline-flex;
@@ -537,32 +559,26 @@ onMounted(async () => {
     font-size: 0.75rem;
     font-weight: 600;
 }
-
-/* NEW COLOR CODING FOR STATUS BADGES */
 .status-badge.active {
-    background: #d1fae5; /* Soft emerald green */
-    color: #059669;      /* Deep emerald green */
+    background: #d1fae5;
+    color: #059669;
 }
-
 .status-badge.inactive {
-    background: #fee2e2; /* Soft red */
-    color: #dc2626;      /* Deep red */
+    background: #fee2e2;
+    color: #dc2626;
 }
-
 .stock-indicator {
     font-weight: 600;
 }
 .stock-indicator.low-stock {
     color: #ef4444; 
 }
-
 /* ── ACTION BUTTONS ── */
 .action-group {
     display: flex;
     gap: 0.5rem;
     justify-content: flex-end;
 }
-
 .action-btn {
     width: 32px;
     height: 32px;
@@ -578,11 +594,9 @@ onMounted(async () => {
     border: 1px solid #e5e7eb;
     color: #6b7280;
 }
-
 .action-btn.edit:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
 .action-btn.disable:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
 .action-btn.activate:hover { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
-
 /* ── EMPTY STATE ── */
 .empty-state {
     text-align: center;
@@ -590,37 +604,115 @@ onMounted(async () => {
     color: #9ca3af;
     background: #ffffff !important;
 }
-
 .empty-state i {
     font-size: 3rem;
     color: #e5e7eb;
     margin-bottom: 1rem;
     display: block;
 }
-
+/* ── PAGINATION ── */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #f3f4f6;
+    background: #ffffff;
+}
+.page-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #3d0300;
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.page-btn:hover:not(:disabled) {
+    border-color: #3d0300;
+    background: rgba(61, 3, 0, 0.04);
+}
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.page-numbers {
+    display: flex;
+    gap: 0.35rem;
+}
+.page-num {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #374151;
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.page-num:hover {
+    border-color: #3d0300;
+    color: #3d0300;
+}
+.page-num.active {
+    background: #3d0300;
+    color: #ffffff;
+    border-color: #3d0300;
+}
+.page-ellipsis {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #9ca3af;
+    user-select: none;
+}
 /* ── RESPONSIVENESS ── */
 @media (max-width: 992px) {
     .admin-wrapper {
         padding-top: 80px;
-        /* Keep it as a row so the sidebar sits to the left of the content */
         flex-direction: row;
     }
-
-    /* Force the sidebar to never disappear */
     .admin-sidebar {
         position: relative;
-        /* It will now push the footer down because it is relative */
     }
     
-    /* When closed, it just shrinks, it doesn't vanish */
     .admin-sidebar.closed {
         width: 80px;
     }
 }
-
 @media (max-width: 768px) {
     .hide-mobile { display: none; }
     .main-header { flex-direction: column; align-items: flex-start; }
     .header-actions { width: 100%; justify-content: space-between; }
+}
+@media (max-width: 576px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .page-numbers {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .admin-main {
+        padding: 1.5rem 1rem;
+    }
 }
 </style>
