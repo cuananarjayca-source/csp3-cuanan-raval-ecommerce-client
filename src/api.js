@@ -252,67 +252,63 @@ export async function updateOrderStatus(orderId, status) {
     return data;
 }
 
-export async function getAllPayments() {
-  try {
-    const response = await fetch(`${API_URL}/payments`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Ensuring your admin authentication token is passed down
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+// ——— Admin Payments ———
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch payment ledgers.');
+export const getAllPayments = async () => {
+    try {
+        // FIXED: Changed from '/payments' to match backend route
+        const response = await api.get('/payment/get-all-payments');
+        
+        // Note: Ensure your backend returns the data array directly, 
+        // or map it here if it's nested (e.g., response.data.payments)
+        return response.data; 
+    } catch (error) {
+        throw error;
     }
+};
 
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function updatePaymentStatus(paymentId, status) {
-  try {
-    const response = await fetch(`${API_URL}/payments/${paymentId}`, {
-      method: 'PATCH', // Update to 'PUT' if your Express backend router is explicitly using router.put()
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify({ status })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update payment status parameters.');
+export const updatePaymentStatus = async (paymentId, status) => {
+    try {
+        // FIXED: Changed from PUT to PATCH and fixed the path string
+        const response = await api.patch(`/payment/update-payment-status/${paymentId}`, { status });
+        return response.data;
+    } catch (error) {
+        throw error;
     }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
+};
 
 export const getAllUsers = async () => {
     try {
-        // Replace with your actual base URL / instance config if using axios
-        const response = await fetch(`${BASE_URL}/users`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to retrieve customer directory.');
-        }
-        
-        return await response.json(); // Returns { message: "Users found", result: [...] }
+        const response = await api.get('/users/show-all-users');
+        return response.data; // Passes { message, result } directly to Vue component
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const promoteUserToAdmin = async (userId) => {
+    try {
+        const response = await api.patch(`/users/${userId}/promote-admin`);
+        return response.data; // Contains { message, user }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const demoteUserFromAdmin = async (userId) => {
+    try {
+        const response = await api.patch(`/users/${userId}/demote-admin`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateProfileAsAdmin = async (userId, profileData) => {
+    try {
+        // profileData parameter layout: { firstName, lastName, mobileNo, email }
+        const response = await api.put(`/users/update-profile-admin/${userId}`, profileData);
+        return response.data;
     } catch (error) {
         throw error;
     }
@@ -320,20 +316,8 @@ export const getAllUsers = async () => {
 
 export const deactivateUserAsAdmin = async (userId) => {
     try {
-        const response = await fetch(`${BASE_URL}/users/${userId}/deactivate`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to deactivate account.');
-        }
-
-        return await response.json(); // Returns { message: "User profile deactivated" }
+        const response = await api.put(`/users/${userId}/deactivate`);
+        return response.data;
     } catch (error) {
         throw error;
     }
@@ -341,20 +325,40 @@ export const deactivateUserAsAdmin = async (userId) => {
 
 export const activateUserAsAdmin = async (userId) => {
     try {
-        const response = await fetch(`${BASE_URL}/users/${userId}/activate`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        const response = await api.put(`/users/${userId}/activate`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to reactivate account.');
-        }
+// ——— Admin Reviews ———
 
-        return await response.json(); // Returns { message: "User profile reactivated" }
+export const getAllReviews = async () => {
+    try {
+        // FIXED: Changed from '/reviews' to match backend route
+        const response = await api.get('/review/get-all-reviews');
+        return response.data; 
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const editReviewAsAdmin = async (reviewId, updateData) => {
+    try {
+        // FIXED: Changed from PUT to PATCH and corrected the endpoint structure
+        const response = await api.patch(`/review/admin-edit-review/${reviewId}`, updateData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteReviewAsAdmin = async (reviewId) => {
+    try {
+        // FIXED: Corrected the endpoint path string
+        const response = await api.delete(`/review/admin-delete-review/${reviewId}`);
+        return response.data;
     } catch (error) {
         throw error;
     }

@@ -42,4 +42,11 @@ export {
     getAllUsers,
     deactivateUserAsAdmin,
     activateUserAsAdmin,
+    promoteUserToAdmin,
+    demoteUserFromAdmin,
+    updateProfileAsAdmin,
+    // ——— Admin: Reviews ———
+    getAllReviews,
+    editReviewAsAdmin,
+    deleteReviewAsAdmin,
 } from "../api.js";

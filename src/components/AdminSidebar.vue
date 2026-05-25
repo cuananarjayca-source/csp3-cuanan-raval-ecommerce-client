@@ -52,6 +52,11 @@ onMounted(() => {
                 <i class="bi bi-people"></i>
                 <span class="nav-text">Customers</span>
             </RouterLink>
+            
+            <RouterLink to="/admin/reviews" class="nav-item" title="Reviews">
+                <i class="bi bi-people"></i>
+                <span class="nav-text">Reviews</span>
+            </RouterLink>
 
             <RouterLink to="/logout" class="nav-item" title="Logout">
                 <i class="bi bi-gear"></i>
