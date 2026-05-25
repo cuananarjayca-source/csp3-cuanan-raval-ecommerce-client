@@ -1,7 +1,3 @@
-<script setup>
-// Empty script blocks must have the 'setup' directive or be deleted entirely to compile cleanly
-</script>
-
 <template>
   <div class="container py-4 text-center">
     <div class="row align-items-center"> 

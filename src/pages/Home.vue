@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import BannerComponent from "../components/BannerComponent.vue";
+import ProductListComponent from "../components/ProductListComponent.vue";
 
 onMounted(() => {
 
@@ -27,6 +28,7 @@ onMounted(() => {
     <main class="relative z-10">
       <!-- Add your core page content here -->
       <BannerComponent />
+      <ProductListComponent />
     </main>
   </div>
 </template>
@@ -48,33 +50,4 @@ onMounted(() => {
   font-family: 'Montserrat', sans-serif;
 }
 
-/* Background Wave Vector Styling */
-.wave-bg {
-  position: absolute; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  height: 40%;
-  background: linear-gradient(135deg, #c0392b33 0%, #e8a09033 50%, #f5cdc033 100%);
-  border-radius: 60% 80% 0 0 / 100% 100% 0 0;
-  z-index: 1;
-}
-
-/* Custom Floating Animations */
-.float-1 { animation: float1 4s ease-in-out infinite; }
-.float-2 { animation: float2 5s ease-in-out infinite; }
-.float-3 { animation: float3 3.5s ease-in-out infinite; }
-
-@keyframes float1 { 
-  0%, 100% { transform: translateY(0) rotate(0deg); } 
-  50% { transform: translateY(-12px) rotate(5deg); } 
-}
-@keyframes float2 { 
-  0%, 100% { transform: translateY(0) rotate(0deg); } 
-  50% { transform: translateY(-18px) rotate(-8deg); } 
-}
-@keyframes float3 { 
-  0%, 100% { transform: translateY(0) rotate(0deg); } 
-  50% { transform: translateY(-10px) rotate(10deg); } 
-}
 </style>
