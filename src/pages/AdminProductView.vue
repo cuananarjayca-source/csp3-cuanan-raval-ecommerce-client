@@ -235,13 +235,13 @@ onMounted(async () => {
                                 <td class="align-right">
                                     <div class="action-group">
                                         <button class="action-btn edit" @click="showView('update', product)" title="Edit Product">
-                                            <i class="bi bi-pencil-square"></i>
+                                            Update
                                         </button>
                                         <button v-if="product.isActive" class="action-btn disable" @click="handleDisable(product._id)" title="Disable Product">
-                                            <i class="bi bi-archive"></i>
+                                            Disable
                                         </button>
                                         <button v-else class="action-btn activate" @click="handleActivate(product._id)" title="Activate Product">
-                                            <i class="bi bi-check-circle"></i>
+                                            Activate
                                         </button>
                                     </div>
                                 </td>
@@ -512,18 +512,14 @@ onMounted(async () => {
 /* ── ACTION BUTTONS ── */
 .action-group { display: flex; gap: 0.5rem; justify-content: flex-end; }
 .action-btn {
-    width: 32px;
-    height: 32px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1.5px solid transparent;
     cursor: pointer;
-    font-size: 1rem;
     transition: all 0.2s ease;
-    background: #ffffff;
-    color: #6b7280;
 }
 .action-btn.edit:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
 .action-btn.disable:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }

@@ -347,14 +347,39 @@ function goToBuy() {
 <style scoped>
 /* ── Section ────────────────────────────── */
 .product-section {
-    background: #f8f5ef;
+    position: relative;
     padding: 5rem 0 4rem;
+    overflow: hidden;
 }
 
+/* 1. Dedicated Background Layer */
+.section-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/product-section-bg.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+/* 2. The Glass Container */
 .ps-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+    
+    /* The Glass Effect */
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+    backdrop-filter: blur(20px);         /* The blur intensity */
+    -webkit-backdrop-filter: blur(20px);  /* Safari support */
+    
+    /* Styling the glass */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    padding: 3rem; /* Add padding so content doesn't touch the edges */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* ── Top Bar & Headers ──────────────────── */
@@ -430,14 +455,20 @@ function goToBuy() {
 /* ── LEFT: Hero card ────────────────────── */
 
 .hero-product-card {
-    background: #faf9fc;
+    /* 1. Translucent Background */
+    background: rgba(250, 249, 252, 0.65);
+    /* 2. Glass Blur */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    /* 3. Soft Glass Border */
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 28px;
     padding: 2rem 1.5rem 1.6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 4px 32px rgba(61,3,0,0.06);
+    box-shadow: 0 8px 32px rgba(61,3,0,0.08); /* Slightly deeper shadow for glass */
     position: relative;
     overflow: hidden;
     transition: opacity 0.22s ease;
@@ -467,7 +498,11 @@ function goToBuy() {
     font-weight: 600;
     color: #6b7280;
     letter-spacing: 0.04em;
-    background: #f3f4f6;
+    /* Glassy Badge */
+    background: rgba(243, 244, 246, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     padding: 0.3rem 0.75rem;
     border-radius: 20px;
     transition: color 0.3s ease;
@@ -598,8 +633,10 @@ function goToBuy() {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: transparent;
-    border: 1.5px solid #d1d5db;
+    /* Glassy Shop Button */
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(209, 213, 219, 0.6);
     border-radius: 14px;
     padding: 0.65rem 1.2rem;
     font-family: 'Inter', sans-serif;
@@ -613,6 +650,7 @@ function goToBuy() {
 .hero-shop-btn:hover {
     border-color: #3d0300;
     color: #3d0300;
+    background: rgba(255, 255, 255, 0.8);
     transform: translateY(-2px);
 }
 
@@ -648,11 +686,14 @@ function goToBuy() {
 }
 
 .nutrition-card {
-    background: #faf9fc;
-    border: 1px solid #e5e7eb;
+    /* Glassy Nutrition Card */
+    background: rgba(250, 249, 252, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 22px;
     padding: 1.4rem;
-    box-shadow: 0 4px 20px rgba(61,3,0,0.04);
+    box-shadow: 0 8px 32px rgba(61,3,0,0.06);
     transition: opacity 0.22s ease;
 }
 
@@ -661,7 +702,11 @@ function goToBuy() {
 .tab-row {
     display: flex;
     gap: 0.25rem;
-    background: #f3f4f6;
+    /* Glassy Tab Row */
+    background: rgba(243, 244, 246, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     padding: 3px;
     margin-bottom: 1.2rem;
@@ -682,11 +727,11 @@ function goToBuy() {
 }
 
 .tab-btn.active {
-    background: #ffffff;
+    /* Slightly more opaque when active */
+    background: rgba(255, 255, 255, 0.85);
     color: #3d0300;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
-
 
 .nf-header {
     display: flex;
@@ -747,7 +792,7 @@ function goToBuy() {
     align-items: center;
     justify-content: space-between;
     padding: 0.3rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(243, 244, 246, 0.8);
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
 }
@@ -815,7 +860,11 @@ function goToBuy() {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    background: #3d0300;
+    /* Deep Glass Badge */
+    background: rgba(61, 3, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #faf9fc;
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
@@ -837,9 +886,12 @@ function goToBuy() {
 .nav-arrow {
     width: 100%;
     height: 36px;
-    border: 1.5px solid #e5e7eb;
+    /* Glass Arrows */
+    background: rgba(250, 249, 252, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(229, 231, 235, 0.8);
     border-radius: 12px;
-    background: #faf9fc;
     color: #3d0300;
     cursor: pointer;
     display: flex;
@@ -850,7 +902,7 @@ function goToBuy() {
 }
 
 .nav-arrow:hover:not(:disabled) {
-    background: #3d0300;
+    background: rgba(61, 3, 0, 0.9);
     border-color: #3d0300;
     color: #faf9fc;
     transform: scaleY(1.05);
@@ -880,9 +932,12 @@ function goToBuy() {
 
 /* Card */
 .carousel-card {
+    /* Add Blur to the colored dynamic background */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 1rem 1.1rem;
-    border: 1.5px solid rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.2); /* Made slightly more visible for glass edge */
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -897,17 +952,17 @@ function goToBuy() {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 90% 10%, rgba(255,255,255,0.05) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 90% 10%, rgba(255,255,255,0.1) 0%, transparent 60%);
     pointer-events: none;
 }
 
 .carousel-card:hover:not(.carousel-card--active) {
     transform: translateX(-4px);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.15);
 }
 
 .carousel-card--active {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     transform: translateX(-6px);
 }
 
