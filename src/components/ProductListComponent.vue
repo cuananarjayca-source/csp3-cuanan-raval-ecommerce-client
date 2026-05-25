@@ -428,7 +428,6 @@ function goToBuy() {
 
 
 /* ── LEFT: Hero card ────────────────────── */
-.col-hero {}
 
 .hero-product-card {
     background: #faf9fc;
@@ -688,7 +687,6 @@ function goToBuy() {
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-.tab-content {}
 
 .nf-header {
     display: flex;
@@ -981,7 +979,6 @@ function goToBuy() {
     line-height: 1.45;
     margin: 0.15rem 0 0.3rem;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

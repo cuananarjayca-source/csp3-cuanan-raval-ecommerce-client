@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
 import { getAllProducts, archiveProduct, activateProduct, getAllStock, getErrorMessage } from '../services/api.js';
+import { RouterLink } from 'vue-router';
 
 // ——— State ———
 const products = ref([]);
@@ -154,6 +155,16 @@ onMounted(async () => {
                     <i class="bi bi-gear"></i>
                     <span class="nav-text">Settings</span>
                 </a>
+                
+                <RouterLink  
+                    to="/logout" 
+                    class="nav-item logout-item" 
+                    title="Logout"
+                    @click="closeOffcanvas"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="nav-text">Logout</span>
+                </RouterLink>
             </nav>
 
             <div class="sidebar-footer">
@@ -294,7 +305,6 @@ onMounted(async () => {
     min-height: 100vh;
     background: #faf9fc;
     font-family: 'Inter', sans-serif;
-    padding-top: 90px;
     flex-direction: row;
 }
 /* ── SIDEBAR ── */

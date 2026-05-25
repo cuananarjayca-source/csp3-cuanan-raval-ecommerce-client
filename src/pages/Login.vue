@@ -30,7 +30,7 @@ async function handleSubmit() {
             globalStore.user.token = token;
             notyf.success(response.data.message || "Logged in successfully!");
             await globalStore.getUserDetails(token);
-            router.push(globalStore.user?.isAdmin ? "/admin/dashboard" : "/");
+            router.push(globalStore.user?.isAdmin ? "/products" : "/");
         }
     } catch (e) {
         notyf.error(e.response?.data?.message || "Login failed.");

@@ -1,6 +1,6 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { RouterLink, useRouter, useRoute } from "vue-router"; 
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"; // <-- Added 'watch'
+import { RouterLink, useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "../stores/global.js";
 
@@ -8,11 +8,23 @@ const globalStore = useGlobalStore();
 const { user } = storeToRefs(globalStore);
 const isAuthenticated = computed(() => Boolean(user.value?.token));
 const router = useRouter();
-const route = useRoute(); 
+const route = useRoute();
+
 
 const isAuthPage = computed(() => {
     return ['/login', '/register'].includes(route.path); 
 });
+
+
+watch(
+    () => user.value?.isAdmin,
+    (isAdmin) => {
+        if (isAdmin && !route.path.startsWith('/admin')) {
+            router.push('/products');
+        }
+    },
+    { immediate: true } 
+);
 
 const isScrolled = ref(false);
 const offcanvasOpen = ref(false);
@@ -65,133 +77,130 @@ const closeDropdown = () => {
 </script>
 
 <template>
-    <div
-        v-if="offcanvasOpen"
-        class="offcanvas-backdrop"
-        @click="closeOffcanvas"
-    ></div>
+    <template v-if="!user?.isAdmin">
+        
+        <div
+            v-if="offcanvasOpen"
+            class="offcanvas-backdrop"
+            @click="closeOffcanvas"
+        ></div>
 
-    <div :class="['offcanvas-menu', { open: offcanvasOpen }]">
-        <div class="offcanvas-header">
-            <span class="offcanvas-brand">
-                <span class="brand-primary">TARO</span>
-                <span class="brand-secondary">&nbsp;606</span>
-            </span>
-            <button class="offcanvas-close" @click="closeOffcanvas" aria-label="Close menu">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <ul class="offcanvas-nav">
-            <li><RouterLink to="/" @click="closeOffcanvas">Home</RouterLink></li>
-            <li><RouterLink to="/products" @click="closeOffcanvas">Products</RouterLink></li>
-            <li><a href="#" @click="closeOffcanvas">Our Story</a></li>
-            <li><a href="#" @click="closeOffcanvas">Review</a></li>
-            <li><a href="#" @click="closeOffcanvas">Contact Us</a></li>
-            <!-- Add this alongside the other offcanvas nav items -->
-            <li v-if="isAuthenticated">
-              <RouterLink to="/cart" @click="closeOffcanvas">Cart</RouterLink>
-            </li>
-            <li v-if="!isAuthenticated">
-                <RouterLink to="/login" @click="closeOffcanvas">Login</RouterLink>
-            </li>
-            <li v-if="!isAuthenticated">
-                <RouterLink to="/register" @click="closeOffcanvas">Register</RouterLink>
-            </li>
-            <li v-if="isAuthenticated">
-                <RouterLink to="/logout" @click="closeOffcanvas">Logout</RouterLink>
-            </li>
-        </ul>
-    </div>
-
-    <nav :class="['global-navbar', { scrolled: isScrolled }]">
-        <div class="navbar-inner">
-
-            <div class="nav-left">
-                <ul class="nav-links d-none d-lg-flex">
-                    <li><RouterLink to="/">Home</RouterLink></li>
-                    <li><RouterLink to="/products">Products</RouterLink></li>
-                    <li><a href="#">Our Story</a></li>
-                    <li><a href="#">Review</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-
-                <button
-                    class="hamburger-btn d-flex d-lg-none"
-                    @click="toggleOffcanvas"
-                    aria-label="Open menu"
-                >
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-
-            <div class="nav-center" v-if="!isAuthPage">
-                <RouterLink to="/" class="navbar-brand-link">
+        <div :class="['offcanvas-menu', { open: offcanvasOpen }]">
+            <div class="offcanvas-header">
+                <span class="offcanvas-brand">
                     <span class="brand-primary">TARO</span>
                     <span class="brand-secondary">&nbsp;606</span>
-                </RouterLink>
+                </span>
+                <button class="offcanvas-close" @click="closeOffcanvas" aria-label="Close menu">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-
-
-            <!-- RIGHT: Cart + Auth Links / Profile -->
-            <div class="nav-right">
-                <!-- Cart Icon -->
-                <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
-                    <i class="bi bi-cart-fill"></i>
-                </RouterLink>
-
-
-                <template v-if="!isAuthenticated">
-                    <RouterLink to="/login" class="auth-link">Login</RouterLink>
-                    <RouterLink to="/register" class="auth-link auth-link--register">Register</RouterLink>
-                </template>
-
-                <template v-else>
-                    <div class="profile-wrapper" ref="profileBtnRef">
-                        <button
-                            class="icon-btn"
-                            :class="{ active: profileDropdownOpen }"
-                            @click.stop="toggleProfileDropdown"
-                            aria-label="Profile menu"
-                            :aria-expanded="profileDropdownOpen"
-                        >
-                            <i class="bi bi-person-circle"></i>
-                        </button>
-
-                        <Transition name="dropdown">
-                            <div v-if="profileDropdownOpen" class="profile-dropdown">
-                                <div class="dropdown-header">
-                                    <i class="bi bi-person-circle dropdown-avatar"></i>
-                                    <div>
-                                        <div class="dropdown-name">{{ user?.name || user?.email?.split('@')[0] || 'My Account' }}</div>
-                                        <div class="dropdown-email">{{ user?.email || '' }}</div>
-                                    </div>
-                                </div>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item" @click="closeDropdown">
-                                    <i class="bi bi-person"></i>
-                                    View Profile
-                                </a>
-                                <a href="#" class="dropdown-item" @click="closeDropdown">
-                                    <i class="bi bi-shield-lock"></i>
-                                    Account Settings
-                                </a>
-                                <a href="#" class="dropdown-item" @click="closeDropdown">
-                                    <i class="bi bi-question-circle"></i>
-                                    Help / FAQ
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <RouterLink to="/logout" class="dropdown-item dropdown-item--logout" @click="closeDropdown">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    Logout
-                                </RouterLink>
-                            </div>
-                        </Transition>
-                    </div>
-                </template>
-            </div>
-
+            <ul class="offcanvas-nav">
+                <li><RouterLink to="/" @click="closeOffcanvas">Home</RouterLink></li>
+                <li><RouterLink to="/products" @click="closeOffcanvas">Products</RouterLink></li>
+                <li><a href="#" @click="closeOffcanvas">Our Story</a></li>
+                <li><a href="#" @click="closeOffcanvas">Review</a></li>
+                <li><a href="#" @click="closeOffcanvas">Contact Us</a></li>
+                <li v-if="!isAuthenticated">
+                    <RouterLink to="/login" @click="closeOffcanvas">Login</RouterLink>
+                </li>
+                <li v-if="!isAuthenticated">
+                    <RouterLink to="/register" @click="closeOffcanvas">Register</RouterLink>
+                </li>
+                <li v-if="isAuthenticated">
+                    <RouterLink to="/logout" @click="closeOffcanvas">Logout</RouterLink>
+                </li>
+            </ul>
         </div>
-    </nav>
+
+        <nav :class="['global-navbar', { scrolled: isScrolled }]">
+            <div class="navbar-inner">
+
+                <div class="nav-left">
+                    <ul class="nav-links d-none d-lg-flex">
+                        <li><RouterLink to="/">Home</RouterLink></li>
+                        <li><RouterLink to="/products">Products</RouterLink></li>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Review</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+
+                    <button
+                        class="hamburger-btn d-flex d-lg-none"
+                        @click="toggleOffcanvas"
+                        aria-label="Open menu"
+                    >
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+
+                <div class="nav-center" v-if="!isAuthPage">
+                    <RouterLink to="/" class="navbar-brand-link">
+                        <span class="brand-primary">TARO</span>
+                        <span class="brand-secondary">&nbsp;606</span>
+                    </RouterLink>
+                </div>
+
+                <div class="nav-right" v-if="!isAuthPage">
+                    
+                    <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
+                        <i class="bi bi-cart-fill"></i>
+                    </RouterLink>
+
+                    <template v-if="!isAuthenticated">
+                        <RouterLink to="/login" class="auth-link">Login</RouterLink>
+                        <RouterLink to="/register" class="auth-link auth-link--register">Register</RouterLink>
+                    </template>
+
+                    <template v-else>
+                        <div class="profile-wrapper" ref="profileBtnRef">
+                            <button
+                                class="icon-btn"
+                                :class="{ active: profileDropdownOpen }"
+                                @click.stop="toggleProfileDropdown"
+                                aria-label="Profile menu"
+                                :aria-expanded="profileDropdownOpen"
+                            >
+                                <i class="bi bi-person-circle"></i>
+                            </button>
+
+                            <Transition name="dropdown">
+                                <div v-if="profileDropdownOpen" class="profile-dropdown">
+                                    <div class="dropdown-header">
+                                        <i class="bi bi-person-circle dropdown-avatar"></i>
+                                        <div>
+                                            <div class="dropdown-name">{{ user?.name || user?.email?.split('@')[0] || 'My Account' }}</div>
+                                            <div class="dropdown-email">{{ user?.email || '' }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item" @click="closeDropdown">
+                                        <i class="bi bi-person"></i>
+                                        View Profile
+                                    </a>
+                                    <a href="#" class="dropdown-item" @click="closeDropdown">
+                                        <i class="bi bi-shield-lock"></i>
+                                        Account Security Settings
+                                    </a>
+                                    <a href="#" class="dropdown-item" @click="closeDropdown">
+                                        <i class="bi bi-question-circle"></i>
+                                        Help / FAQ
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <RouterLink to="/logout" class="dropdown-item dropdown-item--logout" @click="closeDropdown">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        Logout
+                                    </RouterLink>
+                                </div>
+                            </Transition>
+                        </div>
+                    </template>
+                </div>
+
+            </div>
+        </nav>
+        
+    </template>
 </template>
 
 <style scoped>
