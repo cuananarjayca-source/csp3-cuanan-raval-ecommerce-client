@@ -9,10 +9,7 @@
         <h1 class="banner-title mb-4">Brewed Beyond Ordinary. <span class="text-hero">Taste of Originality</span></h1>
         <p class="lead mb-5">Curated coffee experiences made with <strong><em>passion</em></strong>, <strong><em>dedication</em></strong>, and <strong><em>flavor</em></strong> in every can.</p>
         <div class="d-flex gap-3 align-items-center mt-4">
-          <!-- Primary Outline/Accent Button -->
           <button class="btn btn-learn">Learn More</button>
-          
-          <!-- Primary Solid Dark Button with Arrow -->
           <button class="btn btn-order">
             Order Now <span class="arrow-icon">➔</span>
           </button>
@@ -38,16 +35,18 @@
 </template>
 
 <style scoped>
-
+/* ==========================================
+   GLOBAL HERO BASE STYLES
+   ========================================== */
 .banner-title {
   font-family: "Canva-Sunday", serif;
   font-size: 5rem;
   color: #1a1a1a;
-	opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 2s;
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
 }
 
 .text-hero {
@@ -62,25 +61,25 @@ p.lead {
   font-size: 1rem;
   color: #4b5563;
   opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 2s;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
 }
 
 /* Hero - Button Styles */
 .btn {
   border-radius: 50px;       
-  font-family: inherit;      
+  font-family: 'Inter', sans-serif;      
   font-weight: 600;          
   padding: 12px 30px;        
   font-size: 1.1rem;         
   transition: all 0.3s ease; 
   opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 2s;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
 }
 
 /* Learn More Button Styles (Left) */
@@ -113,7 +112,6 @@ p.lead {
   display: inline-block;
 }
 
-
 /* Responsive Structural Positioning */
 .hero-container {
   position: relative;
@@ -130,25 +128,95 @@ p.lead {
   position: absolute;
   z-index: 1;         
   width: 100%;
-  max-width: 1200px; /* Constrained using max-width to protect column breaking */
+  max-width: 1200px; 
   height: auto;
   animation: rotate-background 30s linear infinite; 
 }
 
-/* Layer 2: Main Foreground Can */
+
 .hero-can {
   position: relative; 
   z-index: 2;         
   width: 100%;
-  max-width: 1000px; /* Scaled proportionally to sit beautifully over the background graphics */
+  max-width: 1000px; 
   height: auto;
   animation: fade-in-up 1.5s ease-out forwards;
 }
 
+/* ==========================================
+   MEDIUM SCREENS (Tablets: max-width 1024px)
+   ========================================== */
+@media (max-width: 1024px) {
+  .banner-title {
+    font-size: 3.5rem;
+  }
 
+  .text-hero {
+    font-size: 1.3rem;
+  }
 
-/* Keyframes for Animations */
+  .btn {
+    padding: 10px 24px;
+    font-size: 1rem;
+  }
 
+  .hero-strawberry {
+    max-width: 800px;
+  }
+
+  .hero-can {
+    max-width: 700px;
+  }
+}
+
+/* ==========================================
+   SMALL SCREENS (Mobile: max-width 768px)
+   ========================================== */
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column;
+    min-height: auto;
+    padding: 40px 20px;
+  }
+
+  .banner-title {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+
+  .text-hero {
+    font-size: 1.1rem;
+  }
+
+  p.lead {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  
+  
+  .btn + .btn {
+    margin-left: 0;
+  }
+
+  .hero-strawberry {
+    max-width: 100%;
+  }
+
+  .hero-can {
+    max-width: 90%; 
+    margin-top: 20px;
+  }
+}
+
+/* ==========================================
+   ANIMATIONS KEYFRAMES
+   ========================================== */
 @keyframes fadeInOpacity {
   from {
     opacity: 0;

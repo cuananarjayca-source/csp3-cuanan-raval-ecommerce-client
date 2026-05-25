@@ -108,7 +108,7 @@ const closeDropdown = () => {
             <div class="nav-left">
                 <ul class="nav-links d-none d-lg-flex">
                     <li><RouterLink to="/">Home</RouterLink></li>
-                    <li><RouterLink to="/products">Products</RouterLink></li>
+                    <li><a href="#">Products</a></li>
                     <li><a href="#">Our Story</a></li>
                     <li><a href="#">Review</a></li>
                     <li><a href="#">Contact Us</a></li>
@@ -169,7 +169,7 @@ const closeDropdown = () => {
                                 </a>
                                 <a href="#" class="dropdown-item" @click="closeDropdown">
                                     <i class="bi bi-shield-lock"></i>
-                                    Account Security Settings
+                                    Account Settings
                                 </a>
                                 <RouterLink
                                   v-if="user?.isAdmin"
