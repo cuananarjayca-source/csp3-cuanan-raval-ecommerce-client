@@ -23,6 +23,7 @@ export {
     createStock,
     updateStock,
     getAllStock,
+    adjustStock,
     // ——— Cloudinary ———
     uploadImage,
     // ——— Cart ———
@@ -31,4 +32,7 @@ export {
     updateCartQuantity,
     removeFromCart,
     clearCart,
+    // ——— Admin: Orders ———
+    getAllOrders,
+    updateOrderStatus,
 } from "../api.js";

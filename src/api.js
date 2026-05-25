@@ -184,6 +184,11 @@ export async function getAllStock() {
     return Array.isArray(data.stocks) ? data.stocks : [];
 }
 
+export async function adjustStock(productId, adjustment) {
+    const { data } = await api.patch(`/stocks/adjust-stock/${productId}`, { adjustment });
+    return data;
+}
+
 // ——— Cloudinary Image Upload ———
 
 export async function uploadImage(file) {
@@ -235,5 +240,17 @@ export async function clearCart() {
     const { data } = await api.put("/cart/clear-cart");
     return data;
 }
+
+// ——— Admin Orders ———
+export async function getAllOrders() {
+    const { data } = await api.get("/orders/all-orders");
+    return Array.isArray(data.orders) ? data.orders : [];
+}
+
+export async function updateOrderStatus(orderId, status) {
+    const { data } = await api.patch(`/orders/change-status/${orderId}`, { status });
+    return data;
+}
+
 
 export default api;

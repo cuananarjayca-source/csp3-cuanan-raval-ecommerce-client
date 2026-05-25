@@ -13,6 +13,8 @@ import ProductCatalogPage from "./pages/ProductCatalog.vue";
 import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
 import CartPage from "./pages/CartPage.vue";
+import AdminOrdersView from './pages/AdminOrderView.vue';
+import AdminStockView from './pages/AdminStockView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -53,6 +55,16 @@ const router = createRouter({
       path: '/cart', 
       name: 'Cart',
       component: CartPage 
+    },
+    {
+      path: '/admin/orders',
+      name: 'AdminOrders',
+      component: AdminOrdersView
+    },
+    {
+      path: '/admin/stock',
+      name: 'AdminStock',
+      component: AdminStockView
     }
   ],
 });
