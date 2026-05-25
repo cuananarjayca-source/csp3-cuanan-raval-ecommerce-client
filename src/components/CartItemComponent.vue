@@ -1,3 +1,12 @@
+<script setup>
+defineProps({
+  item: {
+    type: Object,
+    required: true
+  }
+});
+</script>
+
 <template>
   <div class="card shadow-sm mb-3 p-3">
     <div class="row align-items-center g-3">
@@ -46,11 +55,7 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-});
-</script>
+<style scoped>
+
+
+</style>

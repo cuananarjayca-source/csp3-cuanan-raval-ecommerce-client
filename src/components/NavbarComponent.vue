@@ -136,6 +136,7 @@ const closeDropdown = () => {
             <div class="nav-right">
                 <!-- Cart Icon -->
                 <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
+                    <i class="bi bi-cart-fill"></i>
                 </RouterLink>
 
 
