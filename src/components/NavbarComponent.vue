@@ -143,9 +143,14 @@ const closeDropdown = () => {
 
                 <div class="nav-right" v-if="!isAuthPage">
                     
-                    <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
+                    <component 
+                        :is="isAuthenticated ? 'RouterLink' : 'span'" 
+                        to="/cart" 
+                        class="icon-btn" 
+                        :class="{ 'disabled-cart': !isAuthenticated }"
+                        aria-label="Cart">
                         <i class="bi bi-cart-fill"></i>
-                    </RouterLink>
+                    </component>
 
                     <template v-if="!isAuthenticated">
                         <RouterLink to="/login" class="auth-link">Login</RouterLink>
@@ -418,6 +423,12 @@ const closeDropdown = () => {
 
 .icon-btn.active {
     background: #ee807b;
+}
+
+.icon-btn.disabled-cart {
+    background: rgba(61, 3, 0, 0.3);
+    cursor: not-allowed;
+    color: rgba(250, 249, 252, 0.7);
 }
 
 .hamburger-btn {
