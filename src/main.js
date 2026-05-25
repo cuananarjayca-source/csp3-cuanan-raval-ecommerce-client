@@ -16,6 +16,7 @@ import CartPage from "./pages/CartPage.vue";
 import AdminOrdersView from './pages/AdminOrderView.vue';
 import AdminStockPage from "./pages/AdminStockPage.vue";
 import AdminPaymentPage from './pages/AdminPaymentPage.vue';
+import AdminCustomerPage from './pages/AdminCustomerPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -71,6 +72,11 @@ const router = createRouter({
       path: '/admin/payments',
       name: 'AdminPayments',
       component: AdminPaymentPage
+    },
+    {
+      path: '/admin/customers',
+      name: 'AdminCustomer',
+      component: AdminCustomerPage
     }
   ],
 });

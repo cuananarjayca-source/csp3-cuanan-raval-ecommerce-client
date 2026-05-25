@@ -295,4 +295,68 @@ export async function updatePaymentStatus(paymentId, status) {
     throw error;
   }
 }
+
+export const getAllUsers = async () => {
+    try {
+        // Replace with your actual base URL / instance config if using axios
+        const response = await fetch(`${BASE_URL}/users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to retrieve customer directory.');
+        }
+        
+        return await response.json(); // Returns { message: "Users found", result: [...] }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deactivateUserAsAdmin = async (userId) => {
+    try {
+        const response = await fetch(`${BASE_URL}/users/${userId}/deactivate`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to deactivate account.');
+        }
+
+        return await response.json(); // Returns { message: "User profile deactivated" }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const activateUserAsAdmin = async (userId) => {
+    try {
+        const response = await fetch(`${BASE_URL}/users/${userId}/activate`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to reactivate account.');
+        }
+
+        return await response.json(); // Returns { message: "User profile reactivated" }
+    } catch (error) {
+        throw error;
+    }
+};
 export default api;

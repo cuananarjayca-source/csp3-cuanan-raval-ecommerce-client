@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import { getAllStock, updateStock, adjustStock, getErrorMessage } from '../services/api.js';
+import AdminSidebar from '../components/AdminSidebar.vue';
 
 // ——— State ———
 const stocks = ref([]);
@@ -138,50 +139,7 @@ onMounted(async () => {
 <template>
     <div class="admin-wrapper">
 
-        <!-- ── SIDEBAR ── -->
-        <aside class="admin-sidebar" :class="{ 'closed': !isSidebarOpen }">
-            <div class="sidebar-header">
-                <div class="sidebar-brand" v-if="isSidebarOpen">
-                    <span class="brand-p">TARO</span><span class="brand-s">&nbsp;606</span>
-                </div>
-                <button class="toggle-btn" @click="toggleSidebar" aria-label="Toggle Sidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-
-            <nav class="sidebar-nav">
-                <RouterLink to="/products" class="nav-item" title="Products">
-                    <i class="bi bi-box-seam"></i>
-                    <span class="nav-text">Products</span>
-                </RouterLink>
-
-                <RouterLink to="/admin/orders" class="nav-item" title="Orders">
-                    <i class="bi bi-receipt"></i>
-                    <span class="nav-text">Orders</span>
-                </RouterLink>
-
-                <RouterLink to="/admin/stock" class="nav-item active" title="Stock">
-                    <i class="bi bi-layers"></i>
-                    <span class="nav-text">Stock</span>
-                </RouterLink>
-
-                <a href="#" class="nav-item" title="Customers">
-                    <i class="bi bi-people"></i>
-                    <span class="nav-text">Customers</span>
-                </a>
-                <a href="#" class="nav-item" title="Settings">
-                    <i class="bi bi-gear"></i>
-                    <span class="nav-text">Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="admin-profile" title="Admin User">
-                    <i class="bi bi-person-circle"></i>
-                    <span class="profile-text">Admin User</span>
-                </div>
-            </div>
-        </aside>
+       <AdminSidebar />
 
         <!-- ── MAIN CONTENT ── -->
         <main class="admin-main">

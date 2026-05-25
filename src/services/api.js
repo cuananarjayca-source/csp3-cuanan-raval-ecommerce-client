@@ -38,4 +38,8 @@ export {
     // ——— Admin: Payments ———
     getAllPayments,
     updatePaymentStatus,
+    // ——— Admin: Customers ———
+    getAllUsers,
+    deactivateUserAsAdmin,
+    activateUserAsAdmin,
 } from "../api.js";

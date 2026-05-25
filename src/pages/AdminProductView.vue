@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
+import AdminSidebar from '../components/AdminSidebar.vue';
 import { 
     getAllProducts, 
     archiveProduct, 
@@ -10,6 +11,7 @@ import {
     getAllStock, 
     getErrorMessage 
 } from '../services/api.js';
+
 
 // ——— Products State ———
 const products = ref([]);
@@ -175,54 +177,7 @@ onMounted(async () => {
 <template>
     <div class="admin-wrapper">
 
-        <aside class="admin-sidebar" :class="{ 'closed': !isSidebarOpen }">
-            <div class="sidebar-header">
-                <div class="sidebar-brand" v-if="isSidebarOpen">
-                    <span class="brand-p">TARO</span><span class="brand-s">&nbsp;606</span>
-                </div>
-                <button class="toggle-btn" @click="toggleSidebar" aria-label="Toggle Sidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-
-            <nav class="sidebar-nav">
-                <RouterLink to="/products" class="nav-item active" title="Products">
-                    <i class="bi bi-box-seam"></i>
-                    <span class="nav-text">Products</span>
-                </RouterLink>
-                
-                <RouterLink to="/admin/orders" class="nav-item" title="Orders">
-                    <i class="bi bi-receipt"></i>
-                    <span class="nav-text">Orders</span>
-                </RouterLink>
-
-                <RouterLink to="/admin/stock" class="nav-item" title="Stock">
-                    <i class="bi bi-receipt"></i>
-                    <span class="nav-text">Stock</span>
-                </RouterLink>
-
-                <RouterLink to="/admin/payments" class="nav-item active" title="Payments">
-                    <i class="bi bi-credit-card"></i>
-                    <span class="nav-text">Payments</span>
-                </RouterLink>
-
-                <a href="#" class="nav-item" title="Customers">
-                    <i class="bi bi-people"></i>
-                    <span class="nav-text">Customers</span>
-                </a>
-                <a href="#" class="nav-item" title="Settings">
-                    <i class="bi bi-gear"></i>
-                    <span class="nav-text">Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="admin-profile" title="Admin User">
-                    <i class="bi bi-person-circle"></i>
-                    <span class="profile-text">Admin User</span>
-                </div>
-            </div>
-        </aside>
+        <AdminSidebar />
 
         <main class="admin-main">
             <header class="main-header">
@@ -523,4 +478,24 @@ onMounted(async () => {
     .admin-main { padding: 1.5rem; }
     .hide-mobile { display: none; }
 }
+.status-badge { 
+    display: inline-flex; 
+    align-items: center; 
+    padding: 0.35rem 0.75rem; 
+    border-radius: 50px; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+    text-transform: capitalize; 
+}
+
+/* These are the background/text colors you already have */
+.status-badge.active { 
+    background: #dcfce7; 
+    color: #16a34a; 
+}
+.status-badge.inactive { 
+    background: #fee2e2; 
+    color: #dc2626; 
+}
+
 </style>
