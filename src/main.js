@@ -52,7 +52,11 @@ const router = createRouter({
     { 
       path: '/cart', 
       name: 'Cart',
+<<<<<<< HEAD
       component: CartPage 
+=======
+      component: CartPage
+>>>>>>> 900f047a05072d494630dd05acf83b7121779d72
     }
   ],
 });

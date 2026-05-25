@@ -2,7 +2,6 @@
 import { ref, computed, watch } from "vue";
 import { updateCartQuantity } from "../api.js";
 
-const localSubtotal = computed(() => localQuantity.value * props.item.productId.price);
 const props = defineProps({
   item: {
     type: Object,
@@ -15,11 +14,13 @@ const emit = defineEmits(["updated", "remove"]);
 const localQuantity = ref(props.item.quantity);
 const isLoading = ref(false);
 
+const localSubtotal = computed(() => localQuantity.value * props.item.productId.price);
+
 watch(
-    () => props.item.quantity,
-    (newVal) => {
-        localQuantity.value = newVal;
-    }
+  () => props.item.quantity,
+  (newVal) => {
+    localQuantity.value = newVal;
+  }
 );
 
 const increment = async () => {
@@ -39,7 +40,7 @@ const syncQuantity = async () => {
     await updateCartQuantity(props.item.productId._id, localQuantity.value);
     emit("updated");
   } catch (err) {
-  console.error("Update failed:", err.response?.data); // add this
+    console.error("Update failed:", err.response?.data);
     // Revert on failure
     localQuantity.value = props.item.quantity;
   } finally {
@@ -111,3 +112,6 @@ const handleRemove = () => {
     </div>
   </div>
 </template>
+<style scoped>
+
+</style>

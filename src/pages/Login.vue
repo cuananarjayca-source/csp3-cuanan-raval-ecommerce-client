@@ -182,8 +182,6 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
 
 /* ── Page shell ─────────────────────────── */
 .auth-page {
@@ -524,6 +522,8 @@ onBeforeMount(() => {
     color: #6b7280;
     text-align: center;
     margin: 1.2rem 0 1rem;
+    position: relative;
+    z-index:1;
 }
 
 .register-link {

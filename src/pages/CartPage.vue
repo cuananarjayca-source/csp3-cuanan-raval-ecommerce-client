@@ -49,7 +49,7 @@ onMounted(() => {
 
 <template>
   <div class="container py-5">
-    <h2 class="mb-4 fw-bold">My Cart</h2>
+    <h2 class="title-primary mb-4 fw-bold">My Cart</h2>
 
     <!-- Loading State -->
     <div v-if="isInitialLoading" class="text-center py-5">
@@ -109,3 +109,11 @@ onMounted(() => {
   </div>
 </template>
 
+<style scoped>
+.title-primary {
+  font-family: "Canva-Sunday", serif;
+  font-size: 2.5rem;
+  color: #1a1a1a;
+}
+
+</style>

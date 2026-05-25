@@ -134,12 +134,21 @@ function goToBuy() {
     <section class="product-section">
         <div class="ps-container container">
 
-            <div class="section-header">
-                <span class="section-eyebrow">OUR LINEUP</span>
-                <h2 class="section-title">
-                    <span class="title-primary">Crafted for</span>
-                    <span class="title-accent"> Every Craving</span>
-                </h2>
+            <div class="section-top-bar">
+                <div class="section-header">
+                    <span class="section-eyebrow">OUR LINEUP</span>
+                    <h2 class="section-title">
+                        <span class="title-primary">Crafted for</span>
+                        <span class="title-accent"> Every Craving</span>
+                    </h2>
+                </div>
+
+                <div class="carousel-header">
+                    <span class="carousel-label">MORE FLAVORS</span>
+                    <button class="carousel-see-all" @click="goToProducts">
+                        See all <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="row g-4 align-items-start">
@@ -262,13 +271,7 @@ function goToBuy() {
                 </div>
 
                 <div class="col-carousel col-12 col-lg-4">
-                    <div class="carousel-header">
-                        <span class="carousel-label">MORE FLAVORS</span>
-                        <button class="carousel-see-all" @click="goToProducts">
-                            See all <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </div>
-
+                    
                     <button
                         class="nav-arrow nav-arrow--up"
                         @click="navUp"
@@ -354,13 +357,22 @@ function goToBuy() {
     padding: 0 2rem;
 }
 
-/* ── Header ─────────────────────────────── */
+/* ── Top Bar & Headers ──────────────────── */
+.section-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
 .section-header {
     font-family: 'Canva-Sunday', serif;
-    margin-bottom: 3rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    margin-bottom: 0;
 }
 
 .section-eyebrow {
@@ -381,6 +393,39 @@ function goToBuy() {
 
 .title-primary { color: #111827; }
 .title-accent  { color: #3d0300; }
+
+.carousel-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; 
+    margin-bottom: 0.3rem; 
+}
+
+.carousel-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #9ca3af;
+}
+
+.carousel-see-all {
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #3d0300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0;
+    transition: color 0.2s ease, gap 0.2s ease;
+}
+
+.carousel-see-all:hover { color: #ee807b; gap: 0.5rem; }
+
 
 /* ── LEFT: Hero card ────────────────────── */
 .col-hero {}
@@ -790,38 +835,6 @@ function goToBuy() {
     gap: 0.6rem;
 }
 
-.carousel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.2rem;
-}
-
-.carousel-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: #9ca3af;
-}
-
-.carousel-see-all {
-    background: none;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #3d0300;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0;
-    transition: color 0.2s ease, gap 0.2s ease;
-}
-
-.carousel-see-all:hover { color: #ee807b; gap: 0.5rem; }
-
 /* Nav arrows */
 .nav-arrow {
     width: 100%;
@@ -1019,42 +1032,11 @@ function goToBuy() {
 
 /* Medium Screens & Below (Tablets, < 992px) */
 @media (max-width: 991.98px) {
-    .col-carousel  {
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
+    /* Prevents the vertical carousel from becoming too wide when it drops below the other columns */
+    .col-carousel {
+        max-width: 450px;
+        margin: 0 auto; 
     }
-
-    .carousel-header { width: 100%; }
-
-    .nav-arrow--up, .nav-arrow--down {
-        width: 40px;
-        height: 40px;
-        flex-shrink: 0;
-    }
-
-    /* Switch to horizontal scroll on tablet */
-    .carousel-list {
-        flex-direction: row;
-        max-height: none;
-        overflow-x: auto;
-        overflow-y: visible;
-        flex: 1;
-    }
-
-    .carousel-card {
-        min-width: 200px;
-        flex-shrink: 0;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-counter { width: 100%; }
-
-    /* horizontal arrows become left/right */
-    .nav-arrow--up  i::before { content: "\f284"; } /* bi-chevron-left  */
-    .nav-arrow--down i::before { content: "\f285"; } /* bi-chevron-right */
 }
 
 /* Small Screens (Mobile, < 768px) */
@@ -1065,25 +1047,9 @@ function goToBuy() {
     .hero-product-img { width: 150px; }
     .hero-img-wrap    { min-height: 200px; }
 
-    /* Stack carousel controls back vertically for narrow phones */
+    /* Let the carousel take up the full width on small phones */
     .col-carousel {
-        flex-direction: column;
+        max-width: 100%;
     }
-
-    .carousel-list {
-        flex-direction: row;
-        max-height: none;
-        overflow-x: auto;
-        overflow-y: visible;
-    }
-
-    .carousel-card {
-        min-width: 190px;
-        flex-shrink: 0;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav-arrow { width: 100%; }
 }
 </style>
