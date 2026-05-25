@@ -58,14 +58,14 @@ module.exports.createStock = (req, res) => {
 
 module.exports.getAllStock = (req, res) => {
     return Stock.find()
-        .populate("productId", "name price")
+        .populate("productId", "name price imageUrl")
         .then((result) => res.status(200).send({ stocks: result }))
         .catch((err) => errorHandler(err, req, res));
 };
 
 module.exports.getStockByProduct = (req, res) => {
     return Stock.findOne({ productId: req.params.productId })
-        .populate("productId", "name price")
+        .populate("productId", "name price imageUrl")
         .then((result) => {
             if (!result) {
                 return res.status(404).send({ message: "Stock record not found" });

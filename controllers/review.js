@@ -42,7 +42,7 @@ module.exports.createReview = (req, res) => {
 
 module.exports.getMyReviews = (req, res) => {
   return Review.find({ userId: req.user.id })
-    .populate("productId", "name price") 
+    .populate("productId", "name price imageUrl") 
     .then((result) => {
       if (result.length === 0) {
         return res.status(404).send({ message: "No reviews found" });
@@ -143,7 +143,7 @@ module.exports.getReviewsByProduct = (req, res) => {
 
 module.exports.getReviewsByUser = (req, res) => {
     return Review.find({ userId: req.params.userId })
-        .populate("productId", "name") 
+        .populate("productId", "name imageUrl") 
         .then(result => {
             if (result.length === 0) {
                 return res.status(404).send({ message: "This user has not submitted any reviews." });
