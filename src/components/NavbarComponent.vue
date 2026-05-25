@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { RouterLink, useRouter, useRoute } from "vue-router"; 
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "../stores/global.js";
 
@@ -8,6 +8,11 @@ const globalStore = useGlobalStore();
 const { user } = storeToRefs(globalStore);
 const isAuthenticated = computed(() => Boolean(user.value?.token));
 const router = useRouter();
+const route = useRoute(); 
+
+const isAuthPage = computed(() => {
+    return ['/login', '/register'].includes(route.path); 
+});
 
 const isScrolled = ref(false);
 const offcanvasOpen = ref(false);
@@ -60,14 +65,12 @@ const closeDropdown = () => {
 </script>
 
 <template>
-    <!-- Offcanvas Backdrop -->
     <div
         v-if="offcanvasOpen"
         class="offcanvas-backdrop"
         @click="closeOffcanvas"
     ></div>
 
-    <!-- Offcanvas Menu (Mobile) -->
     <div :class="['offcanvas-menu', { open: offcanvasOpen }]">
         <div class="offcanvas-header">
             <span class="offcanvas-brand">
@@ -99,13 +102,10 @@ const closeDropdown = () => {
         </ul>
     </div>
 
-    <!-- Main Navbar -->
     <nav :class="['global-navbar', { scrolled: isScrolled }]">
         <div class="navbar-inner">
 
-            <!-- LEFT: Nav Links (desktop) -->
             <div class="nav-left">
-                <!-- Desktop Links -->
                 <ul class="nav-links d-none d-lg-flex">
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/products">Products</RouterLink></li>
@@ -114,7 +114,6 @@ const closeDropdown = () => {
                     <li><a href="#">Contact Us</a></li>
                 </ul>
 
-                <!-- Mobile Hamburger -->
                 <button
                     class="hamburger-btn d-flex d-lg-none"
                     @click="toggleOffcanvas"
@@ -124,28 +123,24 @@ const closeDropdown = () => {
                 </button>
             </div>
 
-            <!-- CENTER: Brand -->
-            <div class="nav-center">
+            <div class="nav-center" v-if="!isAuthPage">
                 <RouterLink to="/" class="navbar-brand-link">
                     <span class="brand-primary">TARO</span>
                     <span class="brand-secondary">&nbsp;606</span>
                 </RouterLink>
             </div>
 
-            <!-- RIGHT: Cart + Auth Links / Profile -->
-            <div class="nav-right">
-                <!-- Cart Icon -->
+            <div class="nav-right" v-if="!isAuthPage">
+                
                 <a href="#" class="icon-btn" aria-label="Cart">
                     <i class="bi bi-cart-fill"></i>
                 </a>
 
-                <!-- Unauthenticated: Login + Register styled links -->
                 <template v-if="!isAuthenticated">
                     <RouterLink to="/login" class="auth-link">Login</RouterLink>
                     <RouterLink to="/register" class="auth-link auth-link--register">Register</RouterLink>
                 </template>
 
-                <!-- Authenticated: Profile icon + dropdown -->
                 <template v-else>
                     <div class="profile-wrapper" ref="profileBtnRef">
                         <button
@@ -158,10 +153,8 @@ const closeDropdown = () => {
                             <i class="bi bi-person-circle"></i>
                         </button>
 
-                        <!-- Dropdown Menu -->
                         <Transition name="dropdown">
                             <div v-if="profileDropdownOpen" class="profile-dropdown">
-                                <!-- User greeting -->
                                 <div class="dropdown-header">
                                     <i class="bi bi-person-circle dropdown-avatar"></i>
                                     <div>
@@ -169,17 +162,15 @@ const closeDropdown = () => {
                                         <div class="dropdown-email">{{ user?.email || '' }}</div>
                                     </div>
                                 </div>
-
                                 <div class="dropdown-divider"></div>
-
-                               <a href="#" class="dropdown-item" @click="closeDropdown">
-                                   <i class="bi bi-person"></i>
-                                   View Profile
-                               </a>
-                               <a href="#" class="dropdown-item" @click="closeDropdown">
-                                   <i class="bi bi-shield-lock"></i>
-                                   Account Security Settings
-                               </a>
+                                <a href="#" class="dropdown-item" @click="closeDropdown">
+                                    <i class="bi bi-person"></i>
+                                    View Profile
+                                </a>
+                                <a href="#" class="dropdown-item" @click="closeDropdown">
+                                    <i class="bi bi-shield-lock"></i>
+                                    Account Security Settings
+                                </a>
                                 <RouterLink
                                   v-if="user?.isAdmin"
                                   to="/admin/dashboard"
@@ -193,9 +184,7 @@ const closeDropdown = () => {
                                     <i class="bi bi-question-circle"></i>
                                     Help / FAQ
                                 </a>
-
                                 <div class="dropdown-divider"></div>
-
                                 <RouterLink to="/logout" class="dropdown-item dropdown-item--logout" @click="closeDropdown">
                                     <i class="bi bi-box-arrow-right"></i>
                                     Logout
