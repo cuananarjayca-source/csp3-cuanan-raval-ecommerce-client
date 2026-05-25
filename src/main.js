@@ -12,7 +12,6 @@ import LogoutPage from "./pages/Logout.vue";
 import ProductCatalogPage from "./pages/ProductCatalog.vue";
 import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
-import AdminDashboardPage from "./pages/AdminDashboard.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -48,11 +47,6 @@ const router = createRouter({
       path: '/products/:id', 
       component: ProductDetailPage,
       props: true 
-    },
-    { 
-      path: '/admin/dashboard', 
-      name: 'AdminDashboard',
-      component: AdminDashboardPage 
     }
   ],
 });

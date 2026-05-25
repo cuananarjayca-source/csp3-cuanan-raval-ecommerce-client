@@ -3,71 +3,68 @@ import { ref, computed, onMounted } from 'vue';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
 import { getAllProducts, archiveProduct, activateProduct, getAllStock, getErrorMessage } from '../services/api.js';
+
 // ——— State ———
 const products = ref([]);
 const activeView = ref(null);
 const selectedProduct = ref(null);
 const stocks = ref([]);
+
 // Sidebar Toggle State
 const isSidebarOpen = ref(true);
+
 // Pagination State
 const currentPage = ref(1);
 const itemsPerPage = 10;
+
 // ——— Helpers ———
 function toggleSidebar() {
     isSidebarOpen.value = !isSidebarOpen.value;
 }
+
 function getStockForProduct(productId) {
     const stock = stocks.value.find(s => s.productId._id === productId);
     return stock ? stock.quantity : 'N/A';
 }
+
 async function loadProducts() {
     try {
         [products.value, stocks.value] = await Promise.all([
             getAllProducts(),
             getAllStock()
         ]);
-        // Reset to page 1 when data reloads
         currentPage.value = 1;
     } catch (err) {
         console.error('Failed to load data:', getErrorMessage(err));
     }
 }
+
 // ——— Pagination ———
 const totalPages = computed(() => Math.ceil(products.value.length / itemsPerPage));
+
 const visiblePages = computed(() => {
     const total = totalPages.value;
     const current = currentPage.value;
-    
+
     if (total <= 7) {
         return Array.from({ length: total }, (_, i) => i + 1);
     }
-    
+
     const pages = [];
-    
     pages.push(1);
-    
-    if (current > 4) {
-        pages.push('...');
-    }
-    
+
+    if (current > 4) pages.push('...');
+
     const start = Math.max(2, current - 1);
     const end = Math.min(total - 1, current + 1);
-    
+
     for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) {
-            pages.push(i);
-        }
+        if (!pages.includes(i)) pages.push(i);
     }
-    
-    if (current < total - 3) {
-        pages.push('...');
-    }
-    
-    if (!pages.includes(total)) {
-        pages.push(total);
-    }
-    
+
+    if (current < total - 3) pages.push('...');
+    if (!pages.includes(total)) pages.push(total);
+
     return pages;
 });
 
@@ -75,29 +72,29 @@ const paginatedProducts = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     return products.value.slice(start, start + itemsPerPage);
 });
+
 function goToPage(page) {
     if (typeof page === 'number' && page >= 1 && page <= totalPages.value) {
         currentPage.value = page;
     }
 }
-function prevPage() {
-    goToPage(currentPage.value - 1);
-}
-function nextPage() {
-    goToPage(currentPage.value + 1);
-}
+function prevPage() { goToPage(currentPage.value - 1); }
+function nextPage() { goToPage(currentPage.value + 1); }
+
 // ——— View Switching ———
 function showView(view, product = null) {
     activeView.value = view;
     selectedProduct.value = product;
 }
+
 async function onDone() {
     showView(null);
     await loadProducts();
 }
-// ——— Disable / Activate ———
+
+// ——— Archive / Activate ———
 async function handleDisable(productId) {
-    if(!confirm("Are you sure you want to disable this product?")) return;
+    if (!confirm('Are you sure you want to disable this product?')) return;
     try {
         await archiveProduct(productId);
         await loadProducts();
@@ -105,8 +102,9 @@ async function handleDisable(productId) {
         console.error('Failed to disable product:', getErrorMessage(err));
     }
 }
+
 async function handleActivate(productId) {
-    if(!confirm("Are you sure you want to activate this product?")) return;
+    if (!confirm('Are you sure you want to activate this product?')) return;
     try {
         await activateProduct(productId);
         await loadProducts();
@@ -114,6 +112,7 @@ async function handleActivate(productId) {
         console.error('Failed to activate product:', getErrorMessage(err));
     }
 }
+
 // ——— On Mount ———
 onMounted(async () => {
     if (window.innerWidth <= 992) {
@@ -125,11 +124,10 @@ onMounted(async () => {
 
 <template>
     <div class="admin-wrapper">
-        
+
         <!-- ── SIDEBAR ── -->
         <aside class="admin-sidebar" :class="{ 'closed': !isSidebarOpen }">
-            
-            <!-- Sidebar Header with Hamburger -->
+
             <div class="sidebar-header">
                 <div class="sidebar-brand" v-if="isSidebarOpen">
                     <span class="brand-p">TARO</span><span class="brand-s">&nbsp;606</span>
@@ -138,27 +136,26 @@ onMounted(async () => {
                     <i class="bi bi-list"></i>
                 </button>
             </div>
-            
-            <!-- Navigation -->
+
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" title="Products">
-                    <i class="bi bi-box-seam"></i> 
+                    <i class="bi bi-box-seam"></i>
                     <span class="nav-text">Products</span>
                 </a>
                 <a href="#" class="nav-item" title="Orders">
-                    <i class="bi bi-receipt"></i> 
+                    <i class="bi bi-receipt"></i>
                     <span class="nav-text">Orders</span>
                 </a>
                 <a href="#" class="nav-item" title="Customers">
-                    <i class="bi bi-people"></i> 
+                    <i class="bi bi-people"></i>
                     <span class="nav-text">Customers</span>
                 </a>
                 <a href="#" class="nav-item" title="Settings">
-                    <i class="bi bi-gear"></i> 
+                    <i class="bi bi-gear"></i>
                     <span class="nav-text">Settings</span>
                 </a>
             </nav>
-            <!-- Footer Profile -->
+
             <div class="sidebar-footer">
                 <div class="admin-profile" title="Admin User">
                     <i class="bi bi-person-circle"></i>
@@ -166,16 +163,18 @@ onMounted(async () => {
                 </div>
             </div>
         </aside>
+
         <!-- ── MAIN CONTENT ── -->
         <main class="admin-main">
-            
-            <!-- Header Section -->
+
             <header class="main-header">
                 <div class="header-titles">
-                    <h1 class="page-title">{{ activeView === null ? 'Product Management' : (activeView === 'create' ? 'Add New Product' : 'Update Product') }}</h1>
+                    <h1 class="page-title">
+                        {{ activeView === null ? 'Product Management' : (activeView === 'create' ? 'Add New Product' : 'Update Product') }}
+                    </h1>
                     <p class="page-sub">Manage your inventory, pricing, and stock levels.</p>
                 </div>
-                
+
                 <div v-if="activeView === null" class="header-actions">
                     <button class="btn-ghost">
                         <i class="bi bi-receipt"></i> View Orders
@@ -190,6 +189,7 @@ onMounted(async () => {
                     </button>
                 </div>
             </header>
+
             <!-- Table View -->
             <div v-if="activeView === null" class="content-card">
                 <div class="table-responsive">
@@ -209,7 +209,7 @@ onMounted(async () => {
                                 <td class="fw-semibold text-dark">{{ product.name }}</td>
                                 <td class="hide-mobile text-muted truncate-text" :title="product.description">
                                     {{ product.description }}
-                               </td>
+                                </td>
                                 <td class="fw-medium">₱{{ product.price }}</td>
                                 <td>
                                     <span class="stock-indicator" :class="{ 'low-stock': getStockForProduct(product._id) < 10 }">
@@ -244,20 +244,17 @@ onMounted(async () => {
                         </tbody>
                     </table>
                 </div>
+
                 <!-- Pagination -->
                 <div v-if="totalPages > 1" class="pagination">
-                    <button 
-                        class="page-btn" 
-                        :disabled="currentPage === 1" 
-                        @click="prevPage"
-                    >
+                    <button class="page-btn" :disabled="currentPage === 1" @click="prevPage">
                         <i class="bi bi-chevron-left"></i> Previous
                     </button>
-                    
+
                     <div class="page-numbers">
                         <template v-for="(page, index) in visiblePages" :key="index">
                             <span v-if="page === '...'" class="page-ellipsis">…</span>
-                            <button 
+                            <button
                                 v-else
                                 class="page-num"
                                 :class="{ active: page === currentPage }"
@@ -267,16 +264,13 @@ onMounted(async () => {
                             </button>
                         </template>
                     </div>
-                    
-                    <button 
-                        class="page-btn" 
-                        :disabled="currentPage === totalPages" 
-                        @click="nextPage"
-                    >
+
+                    <button class="page-btn" :disabled="currentPage === totalPages" @click="nextPage">
                         Next <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
             </div>
+
             <!-- Create / Update Component Wrappers -->
             <div v-if="activeView === 'create'" class="content-card form-wrapper">
                 <CreateProductComponent @done="onDone" />
@@ -288,12 +282,12 @@ onMounted(async () => {
                     @done="onDone"
                 />
             </div>
+
         </main>
     </div>
 </template>
 
 <style scoped>
-
 /* ── LAYOUT ── */
 .admin-wrapper {
     display: flex;
@@ -311,15 +305,13 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    position: relative; 
+    position: relative;
     min-height: 100vh;
     z-index: 10;
     transition: width 0.3s ease;
     overflow-x: hidden;
 }
-.admin-sidebar.closed {
-    width: 80px;
-}
+.admin-sidebar.closed { width: 80px; }
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -327,9 +319,7 @@ onMounted(async () => {
     padding: 1.5rem 1.25rem;
     height: 80px;
 }
-.admin-sidebar.closed .sidebar-header {
-    justify-content: center;
-}
+.admin-sidebar.closed .sidebar-header { justify-content: center; }
 .sidebar-brand {
     font-family: 'Yanone Kaffeesatz', sans-serif;
     font-size: 2.2rem;
@@ -351,9 +341,7 @@ onMounted(async () => {
     justify-content: center;
     padding: 0;
 }
-.toggle-btn:hover {
-    color: #ee807b;
-}
+.toggle-btn:hover { color: #ee807b; }
 .sidebar-nav {
     flex: 1;
     display: flex;
@@ -361,9 +349,7 @@ onMounted(async () => {
     gap: 0.5rem;
     padding: 0 1rem;
 }
-.admin-sidebar.closed .sidebar-nav {
-    padding: 0 0.5rem;
-}
+.admin-sidebar.closed .sidebar-nav { padding: 0 0.5rem; }
 .nav-item {
     display: flex;
     align-items: center;
@@ -377,27 +363,11 @@ onMounted(async () => {
     transition: all 0.2s ease;
     white-space: nowrap;
 }
-.nav-item i {
-    font-size: 1.3rem;
-    min-width: 24px;
-    text-align: center;
-}
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-}
-.nav-item.active {
-    background: rgba(238, 128, 123, 0.15);
-    color: #ee807b;
-    font-weight: 600;
-}
-.admin-sidebar.closed .nav-item {
-    justify-content: center;
-    padding: 0.85rem 0;
-}
-.admin-sidebar.closed .nav-text {
-    display: none;
-}
+.nav-item i { font-size: 1.3rem; min-width: 24px; text-align: center; }
+.nav-item:hover { background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+.nav-item.active { background: rgba(238, 128, 123, 0.15); color: #ee807b; font-weight: 600; }
+.admin-sidebar.closed .nav-item { justify-content: center; padding: 0.85rem 0; }
+.admin-sidebar.closed .nav-text { display: none; }
 .sidebar-footer {
     padding: 1.5rem 1.25rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -411,19 +381,10 @@ onMounted(async () => {
     color: #e5e7eb;
     white-space: nowrap;
 }
-.admin-profile i {
-    font-size: 1.5rem;
-    color: #ee807b;
-}
-.admin-sidebar.closed .sidebar-footer {
-    padding: 1.5rem 0;
-}
-.admin-sidebar.closed .admin-profile {
-    justify-content: center;
-}
-.admin-sidebar.closed .profile-text {
-    display: none;
-}
+.admin-profile i { font-size: 1.5rem; color: #ee807b; }
+.admin-sidebar.closed .sidebar-footer { padding: 1.5rem 0; }
+.admin-sidebar.closed .admin-profile { justify-content: center; }
+.admin-sidebar.closed .profile-text { display: none; }
 /* ── MAIN CONTENT ── */
 .admin-main {
     flex: 1;
@@ -446,15 +407,8 @@ onMounted(async () => {
     color: #1a1a1a;
     margin: 0 0 0.2rem 0;
 }
-.page-sub {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin: 0;
-}
-.header-actions {
-    display: flex;
-    gap: 1rem;
-}
+.page-sub { font-size: 0.9rem; color: #6b7280; margin: 0; }
+.header-actions { display: flex; gap: 1rem; }
 /* ── BUTTONS ── */
 .btn-primary {
     background: #3d0300;
@@ -489,10 +443,7 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.btn-ghost:hover {
-    border-color: #3d0300;
-    background: rgba(61, 3, 0, 0.04);
-}
+.btn-ghost:hover { border-color: #3d0300; background: rgba(61, 3, 0, 0.04); }
 /* ── CARDS & TABLES ── */
 .content-card {
     background: #ffffff;
@@ -501,18 +452,9 @@ onMounted(async () => {
     padding: 0;
     overflow: hidden;
 }
-.form-wrapper {
-    padding: 2rem;
-}
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-}
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
+.form-wrapper { padding: 2rem; }
+.table-responsive { width: 100%; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; }
 .admin-table th {
     background: #ffffff;
     padding: 1.2rem 1.5rem;
@@ -530,15 +472,9 @@ onMounted(async () => {
     border-bottom: 1px solid #f3f4f6;
     vertical-align: middle;
 }
-.admin-table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-.admin-table tbody tr:hover {
-    background-color: #f1f5f9;
-}
-.admin-table tbody tr:last-child td {
-    border-bottom: none;
-}
+.admin-table tbody tr:nth-child(even) { background-color: #f8f9fa; }
+.admin-table tbody tr:hover { background-color: #f1f5f9; }
+.admin-table tbody tr:last-child td { border-bottom: none; }
 .truncate-text {
     max-width: 200px;
     white-space: nowrap;
@@ -559,31 +495,17 @@ onMounted(async () => {
     font-size: 0.75rem;
     font-weight: 600;
 }
-.status-badge.active {
-    background: #d1fae5;
-    color: #059669;
-}
-.status-badge.inactive {
-    background: #fee2e2;
-    color: #dc2626;
-}
-.stock-indicator {
-    font-weight: 600;
-}
-.stock-indicator.low-stock {
-    color: #ef4444; 
-}
+.status-badge.active { background: #d1fae5; color: #059669; }
+.status-badge.inactive { background: #fee2e2; color: #dc2626; }
+.stock-indicator { font-weight: 600; }
+.stock-indicator.low-stock { color: #ef4444; }
 /* ── ACTION BUTTONS ── */
-.action-group {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-}
+.action-group { display: flex; gap: 0.5rem; justify-content: flex-end; }
 .action-btn {
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -591,7 +513,6 @@ onMounted(async () => {
     font-size: 1rem;
     transition: all 0.2s ease;
     background: #ffffff;
-    border: 1px solid #e5e7eb;
     color: #6b7280;
 }
 .action-btn.edit:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
@@ -604,12 +525,7 @@ onMounted(async () => {
     color: #9ca3af;
     background: #ffffff !important;
 }
-.empty-state i {
-    font-size: 3rem;
-    color: #e5e7eb;
-    margin-bottom: 1rem;
-    display: block;
-}
+.empty-state i { font-size: 3rem; color: #e5e7eb; margin-bottom: 1rem; display: block; }
 /* ── PAGINATION ── */
 .pagination {
     display: flex;
@@ -634,18 +550,9 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.page-btn:hover:not(:disabled) {
-    border-color: #3d0300;
-    background: rgba(61, 3, 0, 0.04);
-}
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-.page-numbers {
-    display: flex;
-    gap: 0.35rem;
-}
+.page-btn:hover:not(:disabled) { border-color: #3d0300; background: rgba(61, 3, 0, 0.04); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-numbers { display: flex; gap: 0.35rem; }
 .page-num {
     width: 36px;
     height: 36px;
@@ -661,15 +568,8 @@ onMounted(async () => {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.page-num:hover {
-    border-color: #3d0300;
-    color: #3d0300;
-}
-.page-num.active {
-    background: #3d0300;
-    color: #ffffff;
-    border-color: #3d0300;
-}
+.page-num:hover { border-color: #3d0300; color: #3d0300; }
+.page-num.active { background: #3d0300; color: #ffffff; border-color: #3d0300; }
 .page-ellipsis {
     width: 36px;
     height: 36px;
@@ -682,17 +582,9 @@ onMounted(async () => {
 }
 /* ── RESPONSIVENESS ── */
 @media (max-width: 992px) {
-    .admin-wrapper {
-        padding-top: 80px;
-        flex-direction: row;
-    }
-    .admin-sidebar {
-        position: relative;
-    }
-    
-    .admin-sidebar.closed {
-        width: 80px;
-    }
+    .admin-wrapper { padding-top: 80px; flex-direction: row; }
+    .admin-sidebar { position: relative; }
+    .admin-sidebar.closed { width: 80px; }
 }
 @media (max-width: 768px) {
     .hide-mobile { display: none; }
@@ -700,19 +592,8 @@ onMounted(async () => {
     .header-actions { width: 100%; justify-content: space-between; }
 }
 @media (max-width: 576px) {
-    .pagination {
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
-    
-    .page-numbers {
-        order: -1;
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .admin-main {
-        padding: 1.5rem 1rem;
-    }
+    .pagination { flex-wrap: wrap; gap: 0.75rem; }
+    .page-numbers { order: -1; width: 100%; justify-content: center; }
+    .admin-main { padding: 1.5rem 1rem; }
 }
 </style>

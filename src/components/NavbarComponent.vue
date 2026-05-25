@@ -96,9 +96,6 @@ const closeDropdown = () => {
             <li v-if="isAuthenticated">
                 <RouterLink to="/logout" @click="closeOffcanvas">Logout</RouterLink>
             </li>
-            <li v-if="user?.isAdmin">
-              <RouterLink to="/admin/dashboard" @click="closeOffcanvas">Admin Dashboard</RouterLink>
-            </li>
         </ul>
     </div>
 
@@ -108,7 +105,7 @@ const closeDropdown = () => {
             <div class="nav-left">
                 <ul class="nav-links d-none d-lg-flex">
                     <li><RouterLink to="/">Home</RouterLink></li>
-                    <li><a href="#">Products</a></li>
+                    <li><RouterLink to="/products">Products</RouterLink></li>
                     <li><a href="#">Our Story</a></li>
                     <li><a href="#">Review</a></li>
                     <li><a href="#">Contact Us</a></li>
@@ -171,15 +168,6 @@ const closeDropdown = () => {
                                     <i class="bi bi-shield-lock"></i>
                                     Account Settings
                                 </a>
-                                <RouterLink
-                                  v-if="user?.isAdmin"
-                                  to="/admin/dashboard"
-                                  class="dropdown-item"
-                                  @click="closeDropdown"
-                                >
-                                  <i class="bi bi-speedometer2"></i>
-                                  Admin Dashboard
-                                </RouterLink>
                                 <a href="#" class="dropdown-item" @click="closeDropdown">
                                     <i class="bi bi-question-circle"></i>
                                     Help / FAQ
