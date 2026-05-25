@@ -203,22 +203,13 @@ onMounted(async () => {
                 <div class="catalog-card-actions">
                   <span class="catalog-card-price">{{ formatPrice(product.price) }}</span>
                   
-                  <!-- If authenticated, show the normal working button -->
-                  <AddToCartButton
-                    v-if="isAuthenticated"
-                    :productId="product._id"
-                    :price="product.price"
-                    compact
-                  />
-
-                  <!-- If unauthenticated, show a dummy button that links to login -->
-                  <RouterLink 
-                    v-else 
-                    to="/login" 
-                    class="btn-add-to-cart-dummy"
-                  >
-                    Add to Cart
-                  </RouterLink>
+                  <div @click.stop class="cart-action-trigger-zone">
+                    <AddToCartButton
+                      :productId="product._id"
+                      :price="product.price"
+                      compact
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -454,23 +445,6 @@ onMounted(async () => {
   font-size: 0.95rem;
   font-weight: 700;
   color: #3d0300;
-}
-
-.btn-add-to-cart-dummy {
-  background: #3d0300;
-  color: #faf9fc;
-  border-radius: 12px;
-  padding: 0.4rem 0.75rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.btn-add-to-cart-dummy:hover {
-  background: #ee807b;
-  transform: translateY(-2px);
 }
 
 .catalog-pagination {

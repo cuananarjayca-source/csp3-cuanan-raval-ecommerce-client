@@ -1,6 +1,14 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useGlobalStore } from "../stores/global.js";
 import { addToCart } from "../api.js";
+
+const router = useRouter();
+const globalStore = useGlobalStore();
+const { user } = storeToRefs(globalStore);
+const isAuthenticated = computed(() => Boolean(user.value?.token));
 
 const props = defineProps({
   productId: {
@@ -32,6 +40,11 @@ const decrement = () => {
 };
 
 const handleAddToCart = async () => {
+  if (!isAuthenticated.value) {
+    router.push("/login");
+    return;
+  }
+
   isLoading.value = true;
   message.value = "";
   isError.value = false;
