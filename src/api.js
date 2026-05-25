@@ -184,6 +184,11 @@ export async function getAllStock() {
     return Array.isArray(data.stocks) ? data.stocks : [];
 }
 
+export async function adjustStock(productId, adjustment) {
+    const { data } = await api.patch(`/stocks/adjust-stock/${productId}`, { adjustment });
+    return data;
+}
+
 // ——— Cloudinary Image Upload ———
 
 export async function uploadImage(file) {
@@ -236,4 +241,126 @@ export async function clearCart() {
     return data;
 }
 
+// ——— Admin Orders ———
+export async function getAllOrders() {
+    const { data } = await api.get("/orders/all-orders");
+    return Array.isArray(data.orders) ? data.orders : [];
+}
+
+export async function updateOrderStatus(orderId, status) {
+    const { data } = await api.patch(`/orders/change-status/${orderId}`, { status });
+    return data;
+}
+
+// ——— Admin Payments ———
+
+export const getAllPayments = async () => {
+    try {
+        // FIXED: Changed from '/payments' to match backend route
+        const response = await api.get('/payment/get-all-payments');
+        
+        // Note: Ensure your backend returns the data array directly, 
+        // or map it here if it's nested (e.g., response.data.payments)
+        return response.data; 
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updatePaymentStatus = async (paymentId, status) => {
+    try {
+        // FIXED: Changed from PUT to PATCH and fixed the path string
+        const response = await api.patch(`/payment/update-payment-status/${paymentId}`, { status });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getAllUsers = async () => {
+    try {
+        const response = await api.get('/users/show-all-users');
+        return response.data; // Passes { message, result } directly to Vue component
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const promoteUserToAdmin = async (userId) => {
+    try {
+        const response = await api.patch(`/users/${userId}/promote-admin`);
+        return response.data; // Contains { message, user }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const demoteUserFromAdmin = async (userId) => {
+    try {
+        const response = await api.patch(`/users/${userId}/demote-admin`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateProfileAsAdmin = async (userId, profileData) => {
+    try {
+        // profileData parameter layout: { firstName, lastName, mobileNo, email }
+        const response = await api.put(`/users/update-profile-admin/${userId}`, profileData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deactivateUserAsAdmin = async (userId) => {
+    try {
+        const response = await api.put(`/users/${userId}/deactivate`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const activateUserAsAdmin = async (userId) => {
+    try {
+        const response = await api.put(`/users/${userId}/activate`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// ——— Admin Reviews ———
+
+export const getAllReviews = async () => {
+    try {
+        // FIXED: Changed from '/reviews' to match backend route
+        const response = await api.get('/review/get-all-reviews');
+        return response.data; 
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const editReviewAsAdmin = async (reviewId, updateData) => {
+    try {
+        // FIXED: Changed from PUT to PATCH and corrected the endpoint structure
+        const response = await api.patch(`/review/admin-edit-review/${reviewId}`, updateData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteReviewAsAdmin = async (reviewId) => {
+    try {
+        // FIXED: Corrected the endpoint path string
+        const response = await api.delete(`/review/admin-delete-review/${reviewId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
 export default api;

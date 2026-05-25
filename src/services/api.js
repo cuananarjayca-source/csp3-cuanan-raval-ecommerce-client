@@ -23,6 +23,7 @@ export {
     createStock,
     updateStock,
     getAllStock,
+    adjustStock,
     // ——— Cloudinary ———
     uploadImage,
     // ——— Cart ———
@@ -31,4 +32,21 @@ export {
     updateCartQuantity,
     removeFromCart,
     clearCart,
+    // ——— Admin: Orders ———
+    getAllOrders,
+    updateOrderStatus,
+    // ——— Admin: Payments ———
+    getAllPayments,
+    updatePaymentStatus,
+    // ——— Admin: Customers ———
+    getAllUsers,
+    deactivateUserAsAdmin,
+    activateUserAsAdmin,
+    promoteUserToAdmin,
+    demoteUserFromAdmin,
+    updateProfileAsAdmin,
+    // ——— Admin: Reviews ———
+    getAllReviews,
+    editReviewAsAdmin,
+    deleteReviewAsAdmin,
 } from "../api.js";
