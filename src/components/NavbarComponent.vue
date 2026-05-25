@@ -87,6 +87,10 @@ const closeDropdown = () => {
             <li><a href="#" @click="closeOffcanvas">Our Story</a></li>
             <li><a href="#" @click="closeOffcanvas">Review</a></li>
             <li><a href="#" @click="closeOffcanvas">Contact Us</a></li>
+            <!-- Add this alongside the other offcanvas nav items -->
+            <li v-if="isAuthenticated">
+              <RouterLink to="/cart" @click="closeOffcanvas">Cart</RouterLink>
+            </li>
             <li v-if="!isAuthenticated">
                 <RouterLink to="/login" @click="closeOffcanvas">Login</RouterLink>
             </li>
@@ -127,11 +131,13 @@ const closeDropdown = () => {
                 </RouterLink>
             </div>
 
-            <div class="nav-right" v-if="!isAuthPage">
-                
-                <a href="#" class="icon-btn" aria-label="Cart">
-                    <i class="bi bi-cart-fill"></i>
-                </a>
+
+            <!-- RIGHT: Cart + Auth Links / Profile -->
+            <div class="nav-right">
+                <!-- Cart Icon -->
+                <RouterLink to="/cart" class="icon-btn" aria-label="Cart">
+                </RouterLink>
+
 
                 <template v-if="!isAuthenticated">
                     <RouterLink to="/login" class="auth-link">Login</RouterLink>
