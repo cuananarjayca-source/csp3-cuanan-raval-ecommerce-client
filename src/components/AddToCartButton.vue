@@ -4,11 +4,23 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "../stores/global.js";
 import { addToCart } from "../api.js";
+import { Notyf } from "notyf";
+
+const notyf = new Notyf({
+  duration: 3000,          
+  dismissible: true,       
+  position: {
+    x: 'center',           
+    y: 'top',              
+  }
+});
 
 const router = useRouter();
 const globalStore = useGlobalStore();
 const { user } = storeToRefs(globalStore);
 const isAuthenticated = computed(() => Boolean(user.value?.token));
+
+
 
 const props = defineProps({
   productId: {
@@ -42,6 +54,7 @@ const decrement = () => {
 const handleAddToCart = async () => {
   if (!isAuthenticated.value) {
     router.push("/login");
+    notyf.error("Please log in to add items to your cart.");
     return;
   }
 
