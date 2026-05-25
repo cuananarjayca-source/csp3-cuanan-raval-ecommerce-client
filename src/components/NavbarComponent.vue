@@ -200,10 +200,9 @@ const closeDropdown = () => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
-
-/* ─── CSS Variables ────────────────────────────────── */
+/* ==========================================================================
+   1. DESIGN TOKENS (Variables)
+   ========================================================================== */
 :root {
     --color-primary: #3d0300;
     --color-secondary: #ee807b;
@@ -211,7 +210,9 @@ const closeDropdown = () => {
     --color-cream: #f8f5ef;
 }
 
-/* ─── Navbar Base ──────────────────────────────────── */
+/* ==========================================================================
+   2. CORE LAYOUT & STRUCTURE
+   ========================================================================== */
 .global-navbar {
     position: fixed;
     top: 0;
@@ -223,8 +224,7 @@ const closeDropdown = () => {
     border-radius: 18px;
     background: transparent;
     box-shadow: none;
-    transition: background 0.4s ease, backdrop-filter 0.4s ease,
-        box-shadow 0.4s ease, border 0.4s ease;
+    transition: background 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
 }
 
 .global-navbar.scrolled {
@@ -235,7 +235,6 @@ const closeDropdown = () => {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-/* ─── Inner Layout ─────────────────────────────────── */
 .navbar-inner {
     display: flex;
     align-items: center;
@@ -244,7 +243,6 @@ const closeDropdown = () => {
     border-radius: 18px;
 }
 
-/* ─── Sections ─────────────────────────────────────── */
 .nav-left,
 .nav-right {
     display: flex;
@@ -264,7 +262,9 @@ const closeDropdown = () => {
     align-items: center;
 }
 
-/* ─── Brand ────────────────────────────────────────── */
+/* ==========================================================================
+   3. BRANDING
+   ========================================================================== */
 .navbar-brand-link {
     font-family: 'Yanone Kaffeesatz', sans-serif;
     font-size: 2.3rem;
@@ -283,7 +283,11 @@ const closeDropdown = () => {
     color: #ee807b;
 }
 
-/* ─── Desktop Nav Links ─────────────────────────────── */
+/* ==========================================================================
+   4. UI COMPONENTS 
+   ========================================================================== */
+
+/* --- Desktop Nav Links --- */
 .nav-links {
     list-style: none;
     margin: 0;
@@ -307,7 +311,6 @@ const closeDropdown = () => {
     transition: color 0.25s ease;
 }
 
-/* animated underline on hover / active */
 .nav-links li a::after {
     content: '';
     position: absolute;
@@ -335,7 +338,59 @@ const closeDropdown = () => {
     font-weight: 700;
 }
 
-/* ─── Icon Buttons ─────────────────────────────────── */
+/* --- Unauthenticated Auth Links --- */
+.auth-link {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #3d0300;
+    background: transparent;
+    padding: 0.4rem 0.6rem;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    transition: color 0.25s ease;
+}
+
+.auth-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0.6rem;
+    right: 0.6rem;
+    height: 2px;
+    background: #ee807b;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+}
+
+.auth-link:hover {
+    color: #ee807b;
+}
+
+.auth-link:hover::after {
+    transform: scaleX(1);
+}
+
+.auth-link--register {
+    color: #ee807b;
+    border-left: 1.5px solid rgba(61, 3, 0, 0.2);
+    padding-left: 0.8rem;
+    margin-left: 0.2rem;
+}
+
+.auth-link--register::after {
+    background: #3d0300;
+}
+
+.auth-link--register:hover {
+    color: #3d0300;
+}
+
+/* --- Buttons --- */
 .icon-btn {
     width: 48px;
     height: 48px;
@@ -357,7 +412,10 @@ const closeDropdown = () => {
     transform: translateY(-2px);
 }
 
-/* ─── Hamburger ─────────────────────────────────────── */
+.icon-btn.active {
+    background: #ee807b;
+}
+
 .hamburger-btn {
     width: 48px;
     height: 48px;
@@ -377,7 +435,128 @@ const closeDropdown = () => {
     transform: translateY(-2px);
 }
 
-/* ─── Offcanvas Backdrop ─────────────────────────────── */
+/* --- Profile Dropdown --- */
+.profile-wrapper {
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 230px;
+    background: #faf9fc;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(61, 3, 0, 0.14);
+    border: 1px solid rgba(61, 3, 0, 0.07);
+    overflow: hidden;
+    z-index: 1100;
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem 0.9rem;
+    background: #3d0300;
+}
+
+.dropdown-avatar {
+    font-size: 2rem;
+    color: #faf9fc;
+    flex-shrink: 0;
+}
+
+.dropdown-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #faf9fc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.dropdown-email {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.73rem;
+    color: rgba(250, 249, 252, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(61, 3, 0, 0.08);
+    margin: 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 1.1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #3d0300;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: #3d0300;
+    transition: color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(238, 128, 123, 0.12);
+    color: #ee807b;
+    padding-left: 1.4rem;
+}
+
+.dropdown-item:hover i {
+    color: #ee807b;
+}
+
+.dropdown-item--logout {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+.dropdown-item--logout i {
+    color: #c0392b;
+}
+
+.dropdown-item--logout:hover {
+    background: rgba(192, 57, 43, 0.08);
+    color: #c0392b;
+    padding-left: 1.4rem;
+}
+
+.dropdown-item--logout:hover i {
+    color: #c0392b;
+}
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+}
+
+/* ==========================================================================
+   5. MOBILE NAVIGATION (Offcanvas)
+   ========================================================================== */
 .offcanvas-backdrop {
     position: fixed;
     inset: 0;
@@ -386,7 +565,6 @@ const closeDropdown = () => {
     z-index: 1040;
 }
 
-/* ─── Offcanvas Menu ─────────────────────────────────── */
 .offcanvas-menu {
     position: fixed;
     top: 0;
@@ -469,9 +647,12 @@ const closeDropdown = () => {
     transform: translateX(4px);
 }
 
-/* ─── Responsive Tweaks ─────────────────────────────── */
 
-/* Tablet: md to lg */
+/* ==========================================================================
+   6. RESPONSIVE TARGETS (Media Queries)
+   ========================================================================== */
+
+/* Target: Tablets (iPad Portrait, etc.) */
 @media (min-width: 768px) and (max-width: 991.98px) {
     .icon-btn {
         width: 42px;
@@ -484,7 +665,7 @@ const closeDropdown = () => {
     }
 }
 
-/* Mobile: < 768px */
+/* Target: Mobile Devices (Phones) */
 @media (max-width: 767.98px) {
     .global-navbar {
         width: 92%;
@@ -514,201 +695,7 @@ const closeDropdown = () => {
     }
 }
 
-/* Very small: < 360px */
-@media (max-width: 359.98px) {
-    .icon-btn,
-    .hamburger-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 0.95rem;
-    }
-
-    .navbar-brand-link {
-        font-size: 1.5rem;
-    }
-}
-
-/* ─── Auth Links (unauthenticated) ──────────────────── */
-.auth-link {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #3d0300;
-    background: transparent;
-    padding: 0.4rem 0.6rem;
-    text-decoration: none;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    position: relative;
-    transition: color 0.25s ease;
-}
-
-.auth-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0.6rem;
-    right: 0.6rem;
-    height: 2px;
-    background: #ee807b;
-    border-radius: 2px;
-    transform: scaleX(0);
-    transition: transform 0.25s ease;
-}
-
-.auth-link:hover {
-    color: #ee807b;
-}
-
-.auth-link:hover::after {
-    transform: scaleX(1);
-}
-
-/* Register gets a subtle separator on its left */
-.auth-link--register {
-    color: #ee807b;
-    border-left: 1.5px solid rgba(61, 3, 0, 0.2);
-    padding-left: 0.8rem;
-    margin-left: 0.2rem;
-}
-
-.auth-link--register::after {
-    background: #3d0300;
-}
-
-.auth-link--register:hover {
-    color: #3d0300;
-}
-
-/* ─── Profile Wrapper & Dropdown ────────────────────── */
-.profile-wrapper {
-    position: relative;
-}
-
-.icon-btn.active {
-    background: #ee807b;
-}
-
-.profile-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    min-width: 230px;
-    background: #faf9fc;
-    border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(61, 3, 0, 0.14);
-    border: 1px solid rgba(61, 3, 0, 0.07);
-    overflow: hidden;
-    z-index: 1100;
-}
-
-/* ─── Dropdown Header ───────────────────────────────── */
-.dropdown-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.1rem 0.9rem;
-    background: #3d0300;
-}
-
-.dropdown-avatar {
-    font-size: 2rem;
-    color: #faf9fc;
-    flex-shrink: 0;
-}
-
-.dropdown-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #faf9fc;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-}
-
-.dropdown-email {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.73rem;
-    color: rgba(250, 249, 252, 0.65);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-}
-
-/* ─── Dropdown Divider ──────────────────────────────── */
-.dropdown-divider {
-    height: 1px;
-    background: rgba(61, 3, 0, 0.08);
-    margin: 0;
-}
-
-/* ─── Dropdown Items ────────────────────────────────── */
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.7rem 1.1rem;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 0.875rem;
-    color: #3d0300;
-    text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
-}
-
-.dropdown-item i {
-    font-size: 1rem;
-    flex-shrink: 0;
-    color: #3d0300;
-    transition: color 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background: rgba(238, 128, 123, 0.12);
-    color: #ee807b;
-    padding-left: 1.4rem;
-}
-
-.dropdown-item:hover i {
-    color: #ee807b;
-}
-
-.dropdown-item--logout {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-.dropdown-item--logout i {
-    color: #c0392b;
-}
-
-.dropdown-item--logout:hover {
-    background: rgba(192, 57, 43, 0.08);
-    color: #c0392b;
-    padding-left: 1.4rem;
-}
-
-.dropdown-item--logout:hover i {
-    color: #c0392b;
-}
-
-/* ─── Dropdown Transition ───────────────────────────── */
-.dropdown-enter-active,
-.dropdown-leave-active {
-    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.dropdown-enter-from,
-.dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-}
-
-/* ─── Mobile: compact auth links ────────────────────── */
+/* Target: Narrow Mobile / Custom elements adjustments */
 @media (max-width: 575.98px) {
     .auth-link {
         font-size: 0.78rem;
@@ -722,6 +709,20 @@ const closeDropdown = () => {
     .profile-dropdown {
         right: -4px;
         min-width: 210px;
+    }
+}
+
+/* Target: Very Small Mobile Devices (e.g. iPhone SE, old devices) */
+@media (max-width: 359.98px) {
+    .icon-btn,
+    .hamburger-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
+    }
+
+    .navbar-brand-link {
+        font-size: 1.5rem;
     }
 }
 </style>
