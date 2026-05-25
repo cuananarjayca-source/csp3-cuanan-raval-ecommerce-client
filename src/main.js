@@ -14,7 +14,8 @@ import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
 import CartPage from "./pages/CartPage.vue";
 import AdminOrdersView from './pages/AdminOrderView.vue';
-import AdminStockView from './pages/AdminStockView.vue';
+import AdminStockPage from "./pages/AdminStockPage.vue";
+import AdminPaymentPage from './pages/AdminPaymentPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -64,7 +65,12 @@ const router = createRouter({
     {
       path: '/admin/stock',
       name: 'AdminStock',
-      component: AdminStockView
+      component: AdminStockPage
+    },
+    {
+      path: '/admin/payments',
+      name: 'AdminPayments',
+      component: AdminPaymentPage
     }
   ],
 });

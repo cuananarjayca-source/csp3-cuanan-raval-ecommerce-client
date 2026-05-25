@@ -252,5 +252,47 @@ export async function updateOrderStatus(orderId, status) {
     return data;
 }
 
+export async function getAllPayments() {
+  try {
+    const response = await fetch(`${API_URL}/payments`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Ensuring your admin authentication token is passed down
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch payment ledgers.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updatePaymentStatus(paymentId, status) {
+  try {
+    const response = await fetch(`${API_URL}/payments/${paymentId}`, {
+      method: 'PATCH', // Update to 'PUT' if your Express backend router is explicitly using router.put()
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ status })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update payment status parameters.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
 export default api;

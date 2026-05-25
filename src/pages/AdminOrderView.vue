@@ -27,6 +27,11 @@
                     <span class="nav-text">Stock</span>
                 </RouterLink>
 
+                <RouterLink to="/admin/payments" class="nav-item active" title="Payments">
+                    <i class="bi bi-credit-card"></i>
+                    <span class="nav-text">Payments</span>
+                </RouterLink>
+
                 <a href="#" class="nav-item" title="Customers">
                     <i class="bi bi-people"></i>
                     <span class="nav-text">Customers</span>

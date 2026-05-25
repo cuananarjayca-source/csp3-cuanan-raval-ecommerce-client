@@ -35,4 +35,7 @@ export {
     // ——— Admin: Orders ———
     getAllOrders,
     updateOrderStatus,
+    // ——— Admin: Payments ———
+    getAllPayments,
+    updatePaymentStatus,
 } from "../api.js";

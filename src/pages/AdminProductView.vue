@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import CreateProductComponent from '../components/CreateProductComponent.vue';
 import UpdateProductComponent from '../components/UpdateProductComponent.vue';
-import AdminStockView from './AdminStockView.vue';
 import { 
     getAllProducts, 
     archiveProduct, 
@@ -200,6 +199,11 @@ onMounted(async () => {
                 <RouterLink to="/admin/stock" class="nav-item" title="Stock">
                     <i class="bi bi-receipt"></i>
                     <span class="nav-text">Stock</span>
+                </RouterLink>
+
+                <RouterLink to="/admin/payments" class="nav-item active" title="Payments">
+                    <i class="bi bi-credit-card"></i>
+                    <span class="nav-text">Payments</span>
                 </RouterLink>
 
                 <a href="#" class="nav-item" title="Customers">
