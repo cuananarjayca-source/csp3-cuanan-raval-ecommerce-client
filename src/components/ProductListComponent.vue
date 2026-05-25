@@ -545,7 +545,7 @@ function goToBuy() {
 }
 
 .hero-product-img {
-    width: 200px;
+    width: 250px;
     height: auto;
     object-fit: contain;
     transform: rotate(30deg);

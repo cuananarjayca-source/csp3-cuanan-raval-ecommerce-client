@@ -10,6 +10,10 @@ const props = defineProps({
   price: {
     type: Number,
     required: true
+  },
+  compact: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -47,10 +51,10 @@ const handleAddToCart = async () => {
 </script>
 
 <template>
-  <div class="d-flex flex-column gap-2">
+  <div class="d-flex flex-column gap-2" :class="{ 'add-to-cart-compact': compact }">
 
     <!-- Quantity Stepper -->
-    <div class="d-flex align-items-center gap-2">
+    <div v-if="!compact" class="d-flex align-items-center gap-2">
       <button
         class="btn btn-outline-secondary btn-sm"
         :disabled="quantity <= 1 || isLoading"
@@ -70,20 +74,56 @@ const handleAddToCart = async () => {
 
     <!-- Add to Cart Button -->
     <button
-      class="btn text-white w-100"
-      style="background-color: #3d0300;"
+      class="btn text-white"
+      :class="compact ? 'catalog-add-btn' : 'w-100'"
+      :style="compact ? undefined : { backgroundColor: '#3d0300' }"
       :disabled="isLoading"
       @click="handleAddToCart"
     >
-      <i class="bi bi-cart-plus me-2"></i>
+      <i v-if="!compact" class="bi bi-cart-plus me-2"></i>
       {{ isLoading ? "Adding..." : "Add to Cart" }}
     </button>
 
     <!-- Feedback Message -->
-    <p v-if="message" :class="isError ? 'text-danger' : 'text-success'" class="small mb-0">
+    <p
+      v-if="message"
+      class="small mb-0"
+      :class="[
+        isError ? 'text-danger' : 'text-success',
+        { 'catalog-add-msg': compact },
+      ]"
+    >
       {{ message }}
     </p>
 
   </div>
 </template>
+
+<style scoped>
+.add-to-cart-compact {
+  gap: 0.25rem !important;
+}
+
+.catalog-add-btn {
+  background: #3d0300;
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.catalog-add-btn:hover:not(:disabled) {
+  background: #5a1814;
+  transform: translateY(-1px);
+}
+
+.catalog-add-msg {
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+</style>
 
