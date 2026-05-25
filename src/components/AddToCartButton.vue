@@ -20,8 +20,6 @@ const globalStore = useGlobalStore();
 const { user } = storeToRefs(globalStore);
 const isAuthenticated = computed(() => Boolean(user.value?.token));
 
-
-
 const props = defineProps({
   productId: {
     type: String,

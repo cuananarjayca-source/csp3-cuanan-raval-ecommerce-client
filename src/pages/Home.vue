@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import BannerComponent from "../components/BannerComponent.vue";
 import ProductListComponent from "../components/ProductListComponent.vue";
+import SaleDiscounts from "../components/SaleDiscounts.vue";
 
 onMounted(() => {
 
@@ -29,6 +30,7 @@ onMounted(() => {
       <!-- Add your core page content here -->
       <BannerComponent />
       <ProductListComponent />
+      <SaleDiscounts />
     </main>
   </div>
 </template>
