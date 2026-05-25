@@ -17,7 +17,7 @@ module.exports.getUserCart = (req, res) => {
             }
 
             return Cart.findOne({ userId: req.user.id })
-                .populate("cartItems.productId", "name price")
+                .populate("cartItems.productId", "name price imageUrl")
                 .then((cart) => {
                     if (!cart) {
                         const newCart = new Cart({
@@ -84,7 +84,7 @@ module.exports.addToCart = (req, res) => {
                                         });
                                         return newCart.save()
                                             .then(() => Cart.findById(newCart._id)
-                                                .populate("cartItems.productId", "name price")
+                                                .populate("cartItems.productId", "name price imageUrl")
                                             )
                                             .then((populatedCart) => res.status(201).send({
                                                 message: "Item added to cart successfully",
@@ -179,7 +179,7 @@ module.exports.changeProductQuantity = (req, res) => {
 
                                     return cart.save()
                                         .then(() => Cart.findById(cart._id)
-                                            .populate("cartItems.productId", "name price")
+                                            .populate("cartItems.productId", "name price imageUrl")
                                         )
                                         .then((populatedCart) => res.status(200).send({
                                             message: "Item quantity updated successfully",
