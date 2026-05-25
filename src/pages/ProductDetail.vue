@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { getProductById, getErrorMessage } from "../api.js";
-
+import AddToCartButton from "../components/AddToCartButton.vue";
 const props = defineProps({
     id: { type: String, required: true },
 });
@@ -54,6 +54,10 @@ watch(() => props.id, load);
                     <li v-if="product.avgRating">Rating: {{ product.avgRating }}</li>
                     <li v-if="product.featured">Featured product</li>
                 </ul>
+                <AddToCartButton
+                        :productId="product._id"
+                        :price="product.price"
+                    />
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
+import AddToCartButton from "../components/AddToCartButton.vue";
 import {
     loadCatalogProducts,
     getActiveProducts,
@@ -167,6 +168,20 @@ onMounted(async () => {
                                 <p class="card-text small">{{ product.description }}</p>
                                 <p class="fw-bold">{{ formatPrice(product.price) }}</p>
                                 <RouterLink :to="`/products/${product._id}`" class="btn btn-primary btn-sm">Details</RouterLink>
+                                <div class="card-body">
+                                    <span class="badge text-bg-secondary mb-2">{{ product.category }}</span>
+                                    <h2 class="h6 card-title">{{ product.name }}</h2>
+                                    <p class="card-text small">{{ product.description }}</p>
+                                    <p class="fw-bold">{{ formatPrice(product.price) }}</p>
+                                    <RouterLink :to="`/products/${product._id}`" class="btn btn-primary btn-sm">Details</RouterLink>
+                                    
+                                    <div class="mt-2">
+                                        <AddToCartButton
+                                            :productId="product._id"
+                                            :price="product.price"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,57 @@
+<script setup>
+import { ref, computed, watch } from "vue";
+import { updateCartQuantity } from "../api.js";
+
+const localSubtotal = computed(() => localQuantity.value * props.item.productId.price);
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true
+  }
+});
+
+const emit = defineEmits(["updated", "remove"]);
+
+const localQuantity = ref(props.item.quantity);
+const isLoading = ref(false);
+
+watch(
+    () => props.item.quantity,
+    (newVal) => {
+        localQuantity.value = newVal;
+    }
+);
+
+const increment = async () => {
+  localQuantity.value++;
+  await syncQuantity();
+};
+
+const decrement = async () => {
+  if (localQuantity.value <= 1) return;
+  localQuantity.value--;
+  await syncQuantity();
+};
+
+const syncQuantity = async () => {
+  isLoading.value = true;
+  try {
+    await updateCartQuantity(props.item.productId._id, localQuantity.value);
+    emit("updated");
+  } catch (err) {
+  console.error("Update failed:", err.response?.data); // add this
+    // Revert on failure
+    localQuantity.value = props.item.quantity;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleRemove = () => {
+  emit("remove", props.item.productId._id);
+};
+</script>
+
 <template>
   <div class="card shadow-sm mb-3 p-3">
     <div class="row align-items-center g-3">
@@ -20,24 +74,36 @@
 
       <!-- Quantity Stepper -->
       <div class="col-6 col-md-3 d-flex align-items-center gap-2">
-        <button class="btn btn-sm btn-outline-secondary">
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          :disabled="localQuantity <= 1 || isLoading"
+          @click="decrement"
+        >
           <i class="bi bi-dash"></i>
         </button>
-        <span class="fw-bold">{{ item.quantity }}</span>
-        <button class="btn btn-sm btn-outline-secondary">
+        <span class="fw-bold">{{ localQuantity }}</span>
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          :disabled="isLoading"
+          @click="increment"
+        >
           <i class="bi bi-plus"></i>
         </button>
       </div>
 
       <!-- Subtotal -->
       <div class="col-4 col-md-2 text-center">
-        <p class="fw-bold mb-0">₱{{ item.subtotal }}</p>
+        <p class="fw-bold mb-0">₱{{ localSubtotal }}</p>
         <p class="text-muted small mb-0">subtotal</p>
       </div>
 
       <!-- Remove Button -->
       <div class="col-2 col-md-1 text-end">
-        <button class="btn btn-sm btn-outline-danger">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          :disabled="isLoading"
+          @click="handleRemove"
+        >
           <i class="bi bi-trash"></i>
         </button>
       </div>
@@ -45,12 +111,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-});
-</script>

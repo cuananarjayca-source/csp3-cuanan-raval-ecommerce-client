@@ -25,8 +25,10 @@ export {
     getAllStock,
     // ——— Cloudinary ———
     uploadImage,
+    // ——— Cart ———
     getCart,
     addToCart,
     updateCartQuantity,
     removeFromCart,
+    clearCart,
 } from "../api.js";

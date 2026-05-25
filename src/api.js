@@ -231,4 +231,9 @@ export async function removeFromCart(productId) {
     return data;
 }
 
+export async function clearCart() {
+    const { data } = await api.put("/cart/clear-cart");
+    return data;
+}
+
 export default api;

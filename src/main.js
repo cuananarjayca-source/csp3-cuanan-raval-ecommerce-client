@@ -12,11 +12,7 @@ import LogoutPage from "./pages/Logout.vue";
 import ProductCatalogPage from "./pages/ProductCatalog.vue";
 import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
-<<<<<<< HEAD
-=======
-import AdminDashboardPage from "./pages/AdminDashboard.vue";
 import CartPage from "./pages/CartPage.vue";
->>>>>>> withcart
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -52,19 +48,11 @@ const router = createRouter({
       path: '/products/:id', 
       component: ProductDetailPage,
       props: true 
-<<<<<<< HEAD
-=======
-    },
-    { 
-      path: '/admin/dashboard', 
-      name: 'AdminDashboard',
-      component: AdminDashboardPage 
     },
     { 
       path: '/cart', 
       name: 'Cart',
       component: CartPage 
->>>>>>> withcart
     }
   ],
 });
