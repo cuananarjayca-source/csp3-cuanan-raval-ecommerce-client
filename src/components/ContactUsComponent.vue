@@ -12,7 +12,13 @@ const submitted = ref(false);
 const submitting = ref(false);
 
 function handleSubmit() {
-    if (!form.fullName || !form.email || !form.message) return;
+    // 1. Basic empty field check
+    if (!form.fullName || !form.email || !form.mobileNumber || !form.message) return;
+    
+    // 2. Strict 11-digit check (failsafe in case native HTML validation is bypassed)
+    const phoneRegex = /^[0-9]{11}$/;
+    if (!phoneRegex.test(form.mobileNumber)) return;
+
     submitting.value = true;
     setTimeout(() => {
         submitting.value = false;
@@ -31,23 +37,21 @@ function handleSubmit() {
 
         <div class="contact-inner container">
 
-            <!-- ── HEADER ── -->
             <div class="contact-header d-flex align-items-center justify-content-center gap-3">
                 <span class="header-bar" aria-hidden="true"></span>
                 <h2 class="contact-title">CONTACT US</h2>
                 <span class="header-bar" aria-hidden="true"></span>
             </div>
 
-            <!-- ── TWO-COLUMN BODY ── -->
+            
             <div class="row g-5 align-items-center justify-content-center">
 
-                <!-- LEFT: Glassmorphism form -->
+                
                 <div class="col-12 col-lg-6 d-flex justify-content-center">
                     <div class="form-panel">
 
                         <p class="form-eyebrow">Send us a message</p>
 
-                        <!-- Success toast -->
                         <Transition name="toast">
                             <div v-if="submitted" class="success-toast">
                                 <i class="bi bi-check-circle-fill"></i>
@@ -55,7 +59,7 @@ function handleSubmit() {
                             </div>
                         </Transition>
 
-                        <form @submit.prevent="handleSubmit" novalidate>
+                        <form @submit.prevent="handleSubmit">
 
                             <div class="field-group">
                                 <input
@@ -84,8 +88,13 @@ function handleSubmit() {
                                     v-model="form.mobileNumber"
                                     type="tel"
                                     class="contact-input"
-                                    placeholder="Mobile Number"
+                                    placeholder="Mobile Number (11 Digits)"
                                     autocomplete="tel"
+                                    required
+                                    maxlength="11"
+                                    pattern="[0-9]{11}"
+                                    title="Please enter exactly 11 digits"
+                                    @input="form.mobileNumber = $event.target.value.replace(/[^0-9]/g, '')"
                                 />
                             </div>
 
@@ -111,7 +120,6 @@ function handleSubmit() {
                     </div>
                 </div>
 
-                <!-- RIGHT: Brand typography art -->
                 <div class="col-12 col-lg-6 d-flex justify-content-center">
                     <div class="brand-art">
                         <span class="corner corner--tl" aria-hidden="true"></span>
@@ -137,7 +145,6 @@ function handleSubmit() {
 </template>
 
 <style scoped>
-
 /* ── Section: bg-vintage.png as background ── */
 .contact-section {
     position: relative;
@@ -175,12 +182,12 @@ function handleSubmit() {
 }
 
 .contact-title {
-    font-family: 'Yanone Kaffeesatz', sans-serif;
+    font-family: 'Canva-Sunday', serif;
     font-size: clamp(2.8rem, 6vw, 5rem);
     font-weight: 700;
     letter-spacing: 0.15rem;
     text-transform: uppercase;
-    color: #b74444;
+    color: #511717;
     margin: 0;
     line-height: 1;
 }
@@ -323,10 +330,10 @@ function handleSubmit() {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(238, 128, 123, 0.15);
-    border: 1px solid rgba(238, 128, 123, 0.45);
+    background: rgba(60, 239, 105, 0.15);
+    border: 1px solid rgba(0, 249, 104, 0.45);
     border-radius: 10px;
-    color: #b74444;
+    color: #44b753;
     font-family: 'Inter', sans-serif;
     font-size: 0.78rem;
     padding: 0.7rem 1rem;
@@ -403,7 +410,7 @@ function handleSubmit() {
 }
 
 .brand-name {
-    font-family: 'Righteous', sans-serif;
+    font-family: 'Canva-Sunday', serif;
     font-size: clamp(4rem, 8vw, 8rem);
     font-weight: 900;
     color: #3d1111;
