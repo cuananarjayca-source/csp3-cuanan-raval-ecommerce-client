@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="header-actions">
-                    <RouterLink to="/admin/products" class="btn-ghost">
+                    <RouterLink to="/products" class="btn-ghost">
                         <i class="bi bi-box-seam"></i> View Products
                     </RouterLink>
                 </div>
@@ -37,7 +37,7 @@
                                 </td>
                                 
                                 <td class="text-muted fw-medium" style="font-size: 0.85rem; white-space: nowrap;">
-                                    {{ formatDate(order.purchasedOn || order.createdAt) }}
+                                    {{ formatDate(order.orderedOn) }}
                                 </td>
 
                                 <td>
