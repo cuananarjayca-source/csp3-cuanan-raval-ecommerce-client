@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watch, computed } from "vue";
 import { RouterLink } from "vue-router";
-import { getProductById, getErrorMessage, getReviewsByProduct, createReview, editReview, deleteReview } from "../api.js";
+import { getProductById, getErrorMessage, getReviewsByProduct, createReview, editReview, deleteReview, checkStock } from "../api.js";
 import AddToCartButton from "../components/AddToCartButton.vue";
 import ReviewForm from "../components/ReviewForm.vue";
 
@@ -12,23 +12,21 @@ const props = defineProps({
 const product = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const stockQuantity = ref(null);
+const stockLoading = ref(false);
 
-// Reviews state
 const reviews = ref([]);
 const reviewsLoading = ref(false);
 const isSubmitting = ref(false);
-const editingReviewId = ref(null); // which review is being edited
+const editingReviewId = ref(null);
 const showForm = ref(false);
 
-// Check if logged in
 const isLoggedIn = computed(() => !!localStorage.getItem("token"));
 
-// Find current user's existing review
 const myReview = computed(() =>
   reviews.value.find((r) => r.userId?._id === getCurrentUserId())
 );
 
-// Decode user id from JWT token
 function getCurrentUserId() {
   const token = localStorage.getItem("token");
   if (!token) return null;
@@ -50,12 +48,13 @@ function formatDate(dateStr) {
   });
 }
 
+// ── Single load() — removed the duplicate ──
 async function load() {
   loading.value = true;
   error.value = null;
   try {
     product.value = await getProductById(props.id);
-    await loadReviews();
+    await Promise.all([loadReviews(), loadStock()]);
   } catch (e) {
     product.value = null;
     error.value = getErrorMessage(e, "Product not found.");
@@ -64,10 +63,23 @@ async function load() {
   }
 }
 
+async function loadStock() {
+  stockLoading.value = true;
+  try {
+    const data = await checkStock(props.id);
+    stockQuantity.value = data.quantity ?? 0;
+  } catch {
+    stockQuantity.value = 0;
+  } finally {
+    stockLoading.value = false;
+  }
+}
+
 async function loadReviews() {
   reviewsLoading.value = true;
   try {
-    reviews.value = await getReviewsByProduct(props.id);
+    const data = await getReviewsByProduct(props.id);
+    reviews.value = data.reviews ?? []; // unwrap the array
   } catch (e) {
     if (e?.response?.status === 404) {
       reviews.value = [];
@@ -80,7 +92,7 @@ async function loadReviews() {
 async function handleCreateReview({ rating, comment }) {
   isSubmitting.value = true;
   try {
-    await createReview(props.id, rating, comment);
+    await createReview({ productId: props.id, rating, comment }); // pass as object
     showForm.value = false;
     await loadReviews();
   } catch (e) {
@@ -93,7 +105,7 @@ async function handleCreateReview({ rating, comment }) {
 async function handleEditReview({ rating, comment }) {
   isSubmitting.value = true;
   try {
-    await editReview(editingReviewId.value, rating, comment);
+    await editReview(editingReviewId.value, { rating, comment }); // pass as object
     editingReviewId.value = null;
     await loadReviews();
   } catch (e) {
@@ -150,7 +162,7 @@ watch(() => props.id, load);
           <div class="product-meta-specs d-flex flex-wrap gap-3 mb-5">
             <div class="spec-badge">
               <i class="bi bi-box-seam me-2 text-muted"></i>
-              Stock: <span class="fw-semibold ms-1">{{ product.stock ?? 0 }}</span>
+              Stock: <span class="fw-semibold ms-1">{{ stockQuantity ?? 0 }}</span>
             </div>
             
             <div v-if="product.avgRating" class="spec-badge">
@@ -165,7 +177,7 @@ watch(() => props.id, load);
           </div>
           
           <div class="action-wrapper">
-            <AddToCartButton :productId="product._id" :price="product.price" />
+            <AddToCartButton :productId="product._id" :price="product.price" :stock="stockQuantity" />
           </div>
         </div>
       </div>

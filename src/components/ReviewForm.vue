@@ -56,7 +56,7 @@ const handleSubmit = () => {
     <div class="d-flex gap-2">
       <button
         class="btn btn-sm text-white fw-semibold px-4"
-        style="background-color: var(--theme-primary)"
+        style="background-color: blue"
         :disabled="rating === 0 || isSubmitting"
         @click="handleSubmit"
       >

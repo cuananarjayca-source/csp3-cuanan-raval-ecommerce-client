@@ -7,12 +7,9 @@ import { addToCart } from "../api.js";
 import { Notyf } from "notyf";
 
 const notyf = new Notyf({
-  duration: 3000,          
-  dismissible: true,       
-  position: {
-    x: 'center',           
-    y: 'top',              
-  }
+  duration: 3000,
+  dismissible: true,
+  position: { x: 'center', y: 'top' }
 });
 
 const router = useRouter();
@@ -21,19 +18,13 @@ const { user } = storeToRefs(globalStore);
 const isAuthenticated = computed(() => Boolean(user.value?.token));
 
 const props = defineProps({
-  productId: {
-    type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  compact: {
-    type: Boolean,
-    default: false
-  }
+  productId: { type: String, required: true },
+  price: { type: Number, required: true },
+  compact: { type: Boolean, default: false },
+  stock: { type: Number, default: null }
 });
+
+const isOutOfStock = computed(() => props.stock !== null && props.stock === 0);
 
 const quantity = ref(1);
 const isLoading = ref(false);
@@ -41,6 +32,7 @@ const message = ref("");
 const isError = ref(false);
 
 const increment = () => {
+  if (props.stock !== null && quantity.value >= props.stock) return;
   quantity.value++;
 };
 
@@ -55,11 +47,9 @@ const handleAddToCart = async () => {
     notyf.error("Please log in to add items to your cart.");
     return;
   }
-
   isLoading.value = true;
   message.value = "";
   isError.value = false;
-
   try {
     await addToCart(props.productId, quantity.value);
     message.value = "Item added to cart successfully!";
@@ -81,41 +71,44 @@ const handleAddToCart = async () => {
     <div v-if="!compact" class="d-flex align-items-center gap-2">
       <button
         class="btn btn-outline-secondary btn-sm"
-        :disabled="quantity <= 1 || isLoading"
+        :disabled="quantity <= 1 || isLoading || isOutOfStock"
         @click="decrement"
       >
         <i class="bi bi-dash"></i>
       </button>
+
       <span class="fw-bold fs-5">{{ quantity }}</span>
+
       <button
         class="btn btn-outline-secondary btn-sm"
-        :disabled="isLoading"
+        :disabled="isLoading || isOutOfStock || (props.stock !== null && quantity >= props.stock)"
         @click="increment"
       >
         <i class="bi bi-plus"></i>
       </button>
+
+      <span v-if="props.stock !== null && !isOutOfStock" class="text-muted small">
+        / {{ props.stock }} left
+      </span>
     </div>
 
     <!-- Add to Cart Button -->
     <button
       class="btn text-white"
       :class="compact ? 'catalog-add-btn' : 'w-100'"
-      :style="compact ? undefined : { backgroundColor: '#3d0300' }"
-      :disabled="isLoading"
+      :style="compact ? undefined : { backgroundColor: isOutOfStock ? '#888' : '#3d0300' }"
+      :disabled="isLoading || isOutOfStock"
       @click="handleAddToCart"
     >
       <i v-if="!compact" class="bi bi-cart-plus me-2"></i>
-      {{ isLoading ? "Adding..." : "Add to Cart" }}
+      {{ isLoading ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart" }}
     </button>
 
     <!-- Feedback Message -->
     <p
       v-if="message"
       class="small mb-0"
-      :class="[
-        isError ? 'text-danger' : 'text-success',
-        { 'catalog-add-msg': compact },
-      ]"
+      :class="[isError ? 'text-danger' : 'text-success', { 'catalog-add-msg': compact }]"
     >
       {{ message }}
     </p>
@@ -127,7 +120,6 @@ const handleAddToCart = async () => {
 .add-to-cart-compact {
   gap: 0.25rem !important;
 }
-
 .catalog-add-btn {
   background: #3d0300;
   border: none;
@@ -139,15 +131,12 @@ const handleAddToCart = async () => {
   white-space: nowrap;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-
 .catalog-add-btn:hover:not(:disabled) {
   background: #5a1814;
   transform: translateY(-1px);
 }
-
 .catalog-add-msg {
   font-size: 0.62rem;
   line-height: 1.2;
 }
 </style>
-

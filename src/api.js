@@ -449,5 +449,11 @@ export async function getMyPayments() {
     return Array.isArray(data.payments) ? data.payments : [];
 }
 
+// ——— Stock (user) ———
+export async function checkStock(productId) {
+    const { data } = await api.get(`/stocks/check-stock/${productId}`);
+    return data; // { message, quantity }
+}
+
 
 export default api;

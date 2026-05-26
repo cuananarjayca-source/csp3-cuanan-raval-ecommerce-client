@@ -62,4 +62,5 @@ export {
     getUserOrders,
     createPayment,
     getMyPayments,
+    checkStock,
 } from "../api.js";
