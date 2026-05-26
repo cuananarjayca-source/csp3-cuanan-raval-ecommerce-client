@@ -49,7 +49,7 @@ onMounted(() => {
 
 <template>
   <div class="container py-5">
-    <h2 class="title-primary mb-4 fw-bold">My Cart</h2>
+    <h2 class="title-primary mb-4 py-5 fw-bold">My Cart</h2>
 
     <!-- Loading State -->
     <div v-if="isInitialLoading" class="text-center py-5">
