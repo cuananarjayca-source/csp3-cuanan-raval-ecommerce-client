@@ -33,7 +33,8 @@ module.exports.createOrder = (req, res) => {
 					const order = new Order({
 						userId: req.user.id,
 						productsOrdered: orderItems,
-						totalPrice: cart.totalPrice
+						totalPrice: cart.totalPrice,
+						status: "Confirmed"
 					});
 
 					return order.save()
@@ -54,7 +55,7 @@ module.exports.createOrder = (req, res) => {
 							return Promise.all(stockUpdates)
 								.then(() => cart.save())
 								.then(() => Order.findById(savedOrder._id)
-									.populate("productsOrdered.productId", "name price")
+									.populate("productsOrdered.productId", "name price imageUrl")
 								)
 								.then((populatedOrder) => res.status(201).send({
 									message: "Ordered successfully",
