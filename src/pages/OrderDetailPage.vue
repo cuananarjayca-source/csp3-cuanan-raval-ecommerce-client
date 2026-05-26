@@ -53,7 +53,7 @@ onMounted(async () => {
       <button class="btn btn-link p-0 text-decoration-none back-btn" @click="router.push('/orders')">
         <i class="bi bi-arrow-left fs-5"></i>
       </button>
-      <h2 class="page-title mb-0">Order Details</h2>
+      <h2 class="page-title mb-0 py-5">Order Details</h2>
     </div>
 
     <!-- Loading -->

@@ -361,13 +361,13 @@ onUnmounted(() => {
   left: 0;
   border-radius: 50%;
   pointer-events: none;
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow:
-    0 0 30px rgba(255, 255, 255, 0.2),
-    inset 0 0 40px rgba(255, 255, 255, 0.06);
+  
+  /* --- REMOVED GLASSMORPHISM --- */
+  /* Replaced with a clean, solid border and a subtle drop shadow for visibility */
+  border: 2px solid #ffffff; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+  background: transparent;
+  
   will-change: transform;
   transform: translate3d(0, 0, 0);
 }
