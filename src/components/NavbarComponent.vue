@@ -185,7 +185,7 @@ const closeDropdown = () => {
                                     </a>
                                     <a href="#" class="dropdown-item" @click="closeDropdown">
                                         <i class="bi bi-shield-lock"></i>
-                                        Account Security Settings
+                                        Account Settings
                                     </a>
                                     <a href="#" class="dropdown-item" @click="closeDropdown">
                                         <i class="bi bi-question-circle"></i>
