@@ -2,6 +2,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from "vue-router";
 import AddToCartButton from "../components/AddToCartButton.vue";
+import { RouterLink } from "vue-router";
 import {
     loadCatalogProducts,
     getActiveProducts,
@@ -203,12 +204,22 @@ onMounted(async () => {
                 <div class="catalog-card-actions">
                   <span class="catalog-card-price">{{ formatPrice(product.price) }}</span>
                   
-                  <div @click.stop class="cart-action-trigger-zone">
-                    <AddToCartButton
-                      :productId="product._id"
-                      :price="product.price"
-                      compact
-                    />
+                  <div class="d-flex align-items-center gap-2"> 
+                    
+                    <router-link 
+                      :to="`/products/${product._id}`" 
+                      class="btn btn-outline-secondary btn-sm"
+                    >
+                      Details
+                    </router-link>
+
+                    <div @click.stop class="cart-action-trigger-zone">
+                      <AddToCartButton
+                        :productId="product._id"
+                        :price="product.price"
+                        compact
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

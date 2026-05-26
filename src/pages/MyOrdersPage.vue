@@ -47,7 +47,7 @@ onMounted(async () => {
 <template>
   <div class="container py-5">
     <div class="d-flex align-items-center justify-content-between mb-4">
-      <h2 class="page-title mb-0">My Orders</h2>
+      <h2 class="page-title mb-0 py-5">My Orders</h2>
       <router-link to="/products" class="btn btn-outline-secondary rounded-3 btn-sm">
         <i class="bi bi-bag-plus me-1"></i> Continue Shopping
       </router-link>
