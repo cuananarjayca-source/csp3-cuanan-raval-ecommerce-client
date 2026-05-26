@@ -4,6 +4,7 @@ import { RouterLink } from "vue-router";
 import BannerComponent from "../components/BannerComponent.vue";
 import ProductListComponent from "../components/ProductListComponent.vue";
 import SaleDiscounts from "../components/SaleDiscounts.vue";
+import OurStory from "../components/OurStory.vue";
 
 onMounted(() => {
 
@@ -31,6 +32,7 @@ onMounted(() => {
       <BannerComponent />
       <ProductListComponent />
       <SaleDiscounts />
+      <OurStory />
     </main>
   </div>
 </template>
