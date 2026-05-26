@@ -344,6 +344,24 @@ export const getAllReviews = async () => {
     }
 };
 
+export const getReviewById = async (reviewId) => {
+    try {
+        const response = await api.get(`/review/get-review/${reviewId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getReviewsByUser = async (userId) => {
+    try {
+        const response = await api.get(`/review/user/${userId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const editReviewAsAdmin = async (reviewId, updateData) => {
     try {
         // FIXED: Changed from PUT to PATCH and corrected the endpoint structure
@@ -363,4 +381,73 @@ export const deleteReviewAsAdmin = async (reviewId) => {
         throw error;
     }
 };
+
+export const getReviewsByProduct = async (productId) => {
+    try {
+        const response = await api.get(`/review/product/${productId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createReview = async (reviewData) => {
+    try {
+        // reviewData layout example: { productId, rating, comment }
+        const response = await api.post('/review/create-review', reviewData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getMyReviews = async () => {
+    try {
+        const response = await api.get('/review/my-reviews');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const editReview = async (reviewId, updateData) => {
+    try {
+        // updateData layout example: { rating?, comment? }
+        const response = await api.patch(`/review/edit-review/${reviewId}`, updateData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteReview = async (reviewId) => {
+    try {
+        const response = await api.delete(`/review/delete-review/${reviewId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export async function checkoutOrder() {
+    const { data } = await api.post("/orders/checkout");
+    return data;
+}
+ 
+export async function getUserOrders() {
+    const { data } = await api.get("/orders/my-orders");
+    return Array.isArray(data.orders) ? data.orders : [];
+}
+
+export async function createPayment(orderId, paymentMethod, amount) {
+    const { data } = await api.post("/payment/create-payment", { orderId, paymentMethod, amount });
+    return data;
+}
+ 
+export async function getMyPayments() {
+    const { data } = await api.get("/payment/my-payments");
+    return Array.isArray(data.payments) ? data.payments : [];
+}
+
+
 export default api;

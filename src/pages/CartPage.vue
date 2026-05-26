@@ -1,16 +1,18 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { getCart, removeFromCart, clearCart } from "../api.js";
 import CartItemComponent from "../components/CartItemComponent.vue";
 import AddToCartButton from "../components/AddToCartButton.vue";
 
+const router = useRouter();
+
 const cart = ref(null);
 const isLoading = ref(false);
+const isInitialLoading = ref(false);
 
 const cartItems = computed(() => cart.value?.cartItems ?? []);
 const totalPrice = computed(() => cart.value?.totalPrice ?? 0);
-const isInitialLoading = ref(false);
 
 const fetchCart = async (showSpinner = false) => {
   if (showSpinner) isInitialLoading.value = true;
@@ -41,11 +43,14 @@ const handleClearCart = async () => {
   }
 };
 
+const handleCheckout = () => {
+  router.push("/checkout");
+};
+
 onMounted(() => {
   fetchCart(true);
 });
 </script>
-
 
 <template>
   <div class="container py-5">
@@ -86,12 +91,12 @@ onMounted(() => {
           <h5 class="fw-bold mb-3">Order Summary</h5>
           <div class="d-flex justify-content-between mb-2">
             <span>Items ({{ cartItems.length }})</span>
-            <span>₱{{ totalPrice }}</span>
+            <span>₱{{ totalPrice.toLocaleString() }}</span>
           </div>
           <hr />
           <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
             <span>Total</span>
-            <span>₱{{ totalPrice }}</span>
+            <span>₱{{ totalPrice.toLocaleString() }}</span>
           </div>
           <button
             class="btn btn-outline-danger w-100 mb-2"
@@ -100,7 +105,12 @@ onMounted(() => {
             <i class="bi bi-trash me-2"></i>
             Clear Cart
           </button>
-          <button class="btn w-100 text-white" style="background-color: var(--theme-primary);">
+          <button
+            class="btn w-100 text-white"
+            style="background-color: #0d6efd;"
+            @click="handleCheckout"
+          >
+            <i class="bi bi-arrow-right me-2"></i>
             Proceed to Checkout
           </button>
         </div>
@@ -115,5 +125,4 @@ onMounted(() => {
   font-size: 2.5rem;
   color: #1a1a1a;
 }
-
 </style>

@@ -49,4 +49,17 @@ export {
     getAllReviews,
     editReviewAsAdmin,
     deleteReviewAsAdmin,
+    getReviewById,
+    getReviewsByUser,
+    // ——— Reviews ———
+    getReviewsByProduct,
+    createReview,
+    getMyReviews,
+    editReview,
+    deleteReview,
+    // ——— Orders ———
+    checkoutOrder,
+    getUserOrders,
+    createPayment,
+    getMyPayments,
 } from "../api.js";
