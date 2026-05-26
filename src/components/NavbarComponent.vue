@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue"; // <-- Added 'watch'
+import { computed, onMounted, onUnmounted, ref, watch, nextTick } from "vue"; // ✅ Fixed: Added nextTick
 import { RouterLink, useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useGlobalStore } from "../stores/global.js";
@@ -10,11 +10,9 @@ const isAuthenticated = computed(() => Boolean(user.value?.token));
 const router = useRouter();
 const route = useRoute();
 
-
 const isAuthPage = computed(() => {
     return ['/login', '/register'].includes(route.path); 
 });
-
 
 watch(
     () => user.value?.isAdmin,
@@ -74,6 +72,29 @@ const toggleProfileDropdown = () => {
 const closeDropdown = () => {
     profileDropdownOpen.value = false;
 };
+
+// ✅ Robust SPA scroll behavior for both same-page and cross-page navigation
+watch(
+    () => [route.path, route.hash],
+    async ([newPath, newHash]) => {
+        if (newHash) {
+            // Using a 100ms timeout ensures elements exist even when switching from /products back to /
+            setTimeout(() => {
+                const element = document.querySelector(newHash);
+                if (element) {
+                    const yOffset = -90; // Prevents navbar overlay
+                    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+                    
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            }, 100);
+        } else if (newPath === '/' && !newHash) {
+            // Smooth scroll back to top when clicking Home
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
@@ -97,10 +118,11 @@ const closeDropdown = () => {
             </div>
             <ul class="offcanvas-nav">
                 <li><RouterLink to="/" @click="closeOffcanvas">Home</RouterLink></li>
-                <li><RouterLink to="/products" @click="closeOffcanvas">Products</RouterLink></li>
-                <li><a href="#" @click="closeOffcanvas">Our Story</a></li>
-                <li><a href="#" @click="closeOffcanvas">Review</a></li>
-                <li><a href="#" @click="closeOffcanvas">Contact Us</a></li>
+                    <li><RouterLink to="/products" @click="closeOffcanvas">Products</RouterLink></li>
+                    
+                    <li><RouterLink to="/#our-story" @click="closeOffcanvas">Our Story</RouterLink></li>
+                    <li><RouterLink to="/#reviews" @click="closeOffcanvas">Review</RouterLink></li>
+                    <li><RouterLink to="/#contact-us" @click="closeOffcanvas">Contact Us</RouterLink></li>
                 <li v-if="!isAuthenticated">
                     <RouterLink to="/login" @click="closeOffcanvas">Login</RouterLink>
                 </li>
@@ -120,9 +142,9 @@ const closeDropdown = () => {
                     <ul class="nav-links d-none d-lg-flex">
                         <li><RouterLink to="/">Home</RouterLink></li>
                         <li><RouterLink to="/products">Products</RouterLink></li>
-                        <li><a href="#">Our Story</a></li>
-                        <li><a href="#">Review</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><RouterLink to="/#our-story">Our Story</RouterLink></li>
+                        <li><RouterLink to="/#reviews">Review</RouterLink></li>
+                        <li><RouterLink to="/#contact-us">Contact Us</RouterLink></li>
                     </ul>
 
                     <button

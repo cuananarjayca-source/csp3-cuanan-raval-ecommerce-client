@@ -1,48 +1,53 @@
 <template>
     <footer class="site-footer">
         <div class="footer-container">
-            <!-- Brand Column -->
             <div class="footer-col brand-col">
                 <h3 class="brand-tagline">TASTE IS BETTER</h3>
                 <img src="../assets/images/taro-logo.png" alt="Taro 606 Logo" class="footer-logo" />
             </div>
 
-            <!-- Address Column -->
             <div class="footer-col">
                 <h5>Address</h5>
                 <p>3483 Jessie Street<br />Newark, OH 43055<br />740-670-7242</p>
             </div>
 
-            <!-- Links Column -->
             <div class="footer-col">
                 <h5>Quick Links</h5>
                 <ul>
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/products">Products</RouterLink></li>
-                    <li><a href="#">Policies</a></li>
-                    <li><a href="#">Frequently Asked Questions</a></li>
+                    <li><RouterLink to="/#contact-us">Policies</RouterLink></li>
+                    <li><RouterLink to="/#contact-us">Frequently Asked Questions</RouterLink></li>
                 </ul>
             </div>
 
-            <!-- About Column -->
             <div class="footer-col">
                 <h5>About us</h5>
                 <ul>
-                    <li><a href="#">Blog Posts</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Flash Deals</a></li>
+                    <li><RouterLink to="/products">Blog Posts</RouterLink></li>
+                    <li><RouterLink to="/products">Careers</RouterLink></li>
+                    <li><RouterLink to="/products">Flash Deals</RouterLink></li>
                 </ul>
             </div>
 
-            <!-- Social/QR Column -->
             <div class="footer-col qr-col">
                 <h5>Follow Us!</h5>
                 <div class="social-icons">
-                    <i class="bi bi-linkedin"></i>
-                    <i class="bi bi-facebook"></i>
-                    <i class="bi bi-twitter-x"></i>
-                    <i class="bi bi-instagram"></i>
-                    <i class="bi bi-tiktok"></i>
+                    <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://www.x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter X">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                        <i class="bi bi-tiktok"></i>
+                    </a>
                 </div>
                 <p class="scan-text">Scan Me!</p>
                 <img src="../assets/images/taro-qr.png" alt="Taro QR Code" class="qr-code" />
@@ -54,6 +59,10 @@
         </div>
     </footer>
 </template>
+
+<script setup>
+import { RouterLink } from "vue-router";
+</script>
 
 <style scoped>
 .site-footer {
@@ -122,7 +131,7 @@
 
 .footer-logo { 
     width: auto;
-    height: 220px; /* Scaled down slightly to fit smaller viewports better */   
+    height: 220px; 
     display: block;
     margin: 0 auto;         
     position: relative; 
@@ -143,13 +152,20 @@
     margin-bottom: 0.4rem;
 }
 
+/* Target the anchor icons cleanly inside the social container wrapper */
+.social-icons a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+}
+
 .social-icons i {
     color: #3d0300;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.social-icons i:hover {
+.social-icons a:hover i {
     color: #ee807b;
     transform: translateY(-4px) scale(1.15);
 }
@@ -169,7 +185,6 @@
    FIXED RESPONSIVE BREAKPOINTS (BUMPED UP FOR EARLY STACKING)
    ========================================================================== */
 
-/* Medium Viewports (Desktop and large tablets) */
 @media (max-width: 1024px) {
     .footer-container { 
         grid-template-columns: repeat(3, 1fr); 
@@ -177,27 +192,23 @@
     }
 }
 
-/* Small Viewports (Small tablets and mobile phones - FIXED RUNPOINT) */
 @media (max-width: 768px) {
     .footer-container { 
-        grid-template-columns: 1fr; /* Force single column grid layout */
+        grid-template-columns: 1fr; 
         text-align: center; 
         gap: 2.5rem;
     }
 
-    /* Force all layout items to center correctly */
     .footer-col {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    /* Reset interactive transforms for vertical center stack views */
     .footer-col a:hover {
         transform: scale(1.05);
     }
 
-    /* Re-center social icons list */
     .social-icons {
         justify-content: center;
         width: 100%;
@@ -206,7 +217,7 @@
 
     .footer-logo {
         margin-bottom: 1rem;
-        height: 200px; /* More compact on actual phone viewports */
+        height: 200px; 
     }
     
     .qr-code {
