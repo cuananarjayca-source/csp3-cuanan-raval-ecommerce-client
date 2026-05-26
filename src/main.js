@@ -13,6 +13,16 @@ import ProductCatalogPage from "./pages/ProductCatalog.vue";
 import ProductDetailPage from "./pages/ProductDetail.vue";
 import RegisterPage from "./pages/Register.vue";
 import CartPage from "./pages/CartPage.vue";
+import AdminOrdersView from './pages/AdminOrderView.vue';
+import AdminStockPage from "./pages/AdminStockPage.vue";
+import AdminPaymentPage from './pages/AdminPaymentPage.vue';
+import AdminCustomerPage from './pages/AdminCustomerPage.vue';
+import AdminReviewPage from './pages/AdminReviewPage.vue';
+import CheckoutPage from "./pages/CheckoutPage.vue";
+import MyOrdersPage from "./pages/MyOrdersPage.vue";
+import OrderDetailPage from "./pages/OrderDetailPage.vue"
+import PaymentPage from "./pages/PaymentPage.vue";
+import MyPaymentsPage from "./pages/MyPaymentsPage.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 import { useGlobalStore } from './stores/global';
 
@@ -53,7 +63,64 @@ const router = createRouter({
       path: '/cart', 
       name: 'Cart',
       component: CartPage 
-    }
+    },
+    {
+      path: '/admin/orders',
+      name: 'AdminOrders',
+      component: AdminOrdersView
+    },
+    {
+      path: '/admin/stock',
+      name: 'AdminStock',
+      component: AdminStockPage
+    },
+    {
+      path: '/admin/payments',
+      name: 'AdminPayments',
+      component: AdminPaymentPage
+    },
+    {
+      path: '/admin/customers',
+      name: 'AdminCustomer',
+      component: AdminCustomerPage
+    },
+    {
+      path: '/admin/reviews',
+      name: 'AdminReview',
+      component: AdminReviewPage
+    },
+    {
+      path: '/checkout',
+      name: 'Checkout',
+      component: CheckoutPage,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/orders',
+      name: 'MyOrders',
+      component: MyOrdersPage,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/orders/:id',
+      name: 'OrderDetail',
+      component: OrderDetailPage,
+      props: true,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/payment/:orderId',
+      name: 'Payment',
+      component: PaymentPage,
+      props: true,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/my-payments',
+      name: 'MyPayments',
+      component: MyPaymentsPage,
+      meta: { requiresAuth: true }
+    },
   ],
 });
 
