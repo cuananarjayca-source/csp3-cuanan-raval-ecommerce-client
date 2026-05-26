@@ -11,3 +11,8 @@ main {
     font-style: normal;
     font-display: swap;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px; /* Prevents your fixed navbar from covering section titles */
+}

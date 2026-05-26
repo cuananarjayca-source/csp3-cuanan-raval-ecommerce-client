@@ -1,5 +1,5 @@
 <template>
-  <section class="our-story-section" aria-labelledby="our-story-heading">
+  <section id= "our-story" class="our-story-section" aria-labelledby="our-story-heading">
     <div
       ref="stageRef"
       class="xray-stage"

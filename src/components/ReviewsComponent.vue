@@ -1,5 +1,5 @@
 <template>
-  <section class="reviews-section" aria-labelledby="reviews-heading">
+  <section id= "reviews" class="reviews-section" aria-labelledby="reviews-heading">
     <div class="container position-relative">
       <header class="reviews-header d-flex justify-content-center align-items-center">
         <span class="reviews-header-icon" aria-hidden="true">

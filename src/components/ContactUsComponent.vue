@@ -33,7 +33,7 @@ function handleSubmit() {
 </script>
 
 <template>
-    <section class="contact-section">
+    <section id= "contact-us" class="contact-section">
 
         <div class="contact-inner container">
 

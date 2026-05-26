@@ -34,9 +34,9 @@ onMounted(() => {
       <BannerComponent />
       <ProductListComponent />
       <SaleDiscounts />
-      <OurStory />
-      <ReviewsComponent />
-      <ContactUsComponent />
+      <OurStory id="our-story" />
+      <ReviewsComponent id="reviews" />
+      <ContactUsComponent id="contact-us" />
     </main>
   </div>
 </template>
