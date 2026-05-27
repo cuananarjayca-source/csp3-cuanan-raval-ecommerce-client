@@ -307,7 +307,7 @@ onMounted(async () => {
 
 <style scoped>
 /* ── LAYOUT ── */
-.admin-wrapper { display: flex; min-height: 100vh; background: #faf9fc; font-family: 'Inter', sans-serif; padding-top: 90px; flex-direction: row; }
+.admin-wrapper { display: flex; min-height: 100vh; background: #faf9fc; font-family: 'Inter', sans-serif; flex-direction: row; }
 
 /* ── SIDEBAR ── */
 .admin-sidebar { width: 260px; background: #3d0300; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; position: relative; min-height: 100vh; z-index: 10; transition: width 0.3s ease; overflow-x: hidden; }
@@ -427,7 +427,6 @@ onMounted(async () => {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-    .admin-sidebar { display: none; }
     .admin-main { padding: 1.5rem; }
     .hide-mobile { display: none; }
 }

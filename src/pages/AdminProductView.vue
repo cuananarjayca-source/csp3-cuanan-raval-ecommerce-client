@@ -324,10 +324,10 @@ onMounted(async () => {
    ========================================================================== */
 .admin-wrapper { 
     display: flex; 
-    min-height: calc(100vh - 90px); /* Subtract top navbar height cleanly */
+    min-height: 100vh; /* Removed the - 90px calculation */
     background: #faf9fc; 
     font-family: 'Inter', sans-serif; 
-    margin-top: 90px; /* Push the container block below the fixed navbar */
+    margin-top: 0; /* Changed from 90px to 0 to remove the gap */
     flex-direction: row; 
     width: 100%;
 }
@@ -340,7 +340,7 @@ onMounted(async () => {
     flex-direction: column; 
     flex-shrink: 0; 
     position: relative; 
-    min-height: calc(100vh - 90px); /* Fill the exact viewport remaining space */
+    min-height: 100vh; /* Removed the - 90px calculation */
     z-index: 10; 
     transition: width 0.3s ease; 
     overflow-x: hidden; 
@@ -349,7 +349,7 @@ onMounted(async () => {
 .admin-main { 
     flex: 1; 
     padding: 2.5rem 3rem; 
-    max-height: calc(100vh - 90px); /* Isolate scroll behavior to this window panel only */
+    max-height: 100vh; /* Removed the - 90px calculation */
     overflow-y: auto; 
     transition: width 0.3s ease; 
 }
@@ -474,28 +474,8 @@ onMounted(async () => {
 .modal-action-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; }
 
 @media (max-width: 768px) {
-    .admin-sidebar { display: none; }
     .admin-main { padding: 1.5rem; }
     .hide-mobile { display: none; }
-}
-.status-badge { 
-    display: inline-flex; 
-    align-items: center; 
-    padding: 0.35rem 0.75rem; 
-    border-radius: 50px; 
-    font-size: 0.75rem; 
-    font-weight: 600; 
-    text-transform: capitalize; 
-}
-
-/* These are the background/text colors you already have */
-.status-badge.active { 
-    background: #dcfce7; 
-    color: #16a34a; 
-}
-.status-badge.inactive { 
-    background: #fee2e2; 
-    color: #dc2626; 
 }
 
 </style>

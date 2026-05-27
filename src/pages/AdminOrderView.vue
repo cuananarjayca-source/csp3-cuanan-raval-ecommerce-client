@@ -1,3 +1,102 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
+import { getAllOrders, updateOrderStatus, getErrorMessage } from '../services/api.js';
+import AdminSidebar from '../components/AdminSidebar.vue';
+
+// ——— Orders State ———
+const orders = ref([]);
+const isSidebarOpen = ref(true);
+
+// Pagination States
+const itemsPerPage = 10;
+const currentOrderPage = ref(1);
+
+function toggleSidebar() {
+    isSidebarOpen.value = !isSidebarOpen.value;
+}
+
+async function loadOrders() {
+    try {
+        orders.value = await getAllOrders();
+    } catch (err) {
+        console.error('Failed to load orders:', getErrorMessage(err));
+    }
+}
+
+// ——— Orders Management Actions ———
+async function handleUpdateStatus(orderId, nextStatus) {
+    if (!confirm(`Are you sure you want to change order status to "${nextStatus}"?`)) return;
+    try {
+        await updateOrderStatus(orderId, nextStatus);
+        await loadOrders();
+    } catch (err) {
+        console.error('Failed to update order status:', getErrorMessage(err));
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// ——— Orders Pagination Logic ───
+const totalOrderPages = computed(() => Math.ceil(orders.value.length / itemsPerPage));
+
+const visibleOrderPages = computed(() => {
+    const total = totalOrderPages.value;
+    const current = currentOrderPage.value;
+
+    if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const pages = [];
+    pages.push(1);
+
+    if (current > 4) pages.push('...');
+
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 1, current + 1);
+
+    for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) pages.push(i);
+    }
+
+    if (current < total - 3) pages.push('...');
+    if (!pages.includes(total)) pages.push(total);
+
+    return pages;
+});
+
+const paginatedOrders = computed(() => {
+    const start = (currentOrderPage.value - 1) * itemsPerPage;
+    return orders.value.slice(start, start + itemsPerPage);
+});
+
+function goToOrderPage(page) {
+    if (typeof page === 'number' && page >= 1 && page <= totalOrderPages.value) {
+        currentOrderPage.value = page;
+    }
+}
+function prevOrderPage() { goToOrderPage(currentOrderPage.value - 1); }
+function nextOrderPage() { goToOrderPage(currentOrderPage.value + 1); }
+
+onMounted(async () => {
+    if (window.innerWidth <= 992) {
+        isSidebarOpen.value = false;
+    }
+    await loadOrders();
+});
+</script>
+
 <template>
     <div class="admin-wrapper">
 
@@ -118,108 +217,11 @@
     </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue';
-import { RouterLink } from 'vue-router';
-import { getAllOrders, updateOrderStatus, getErrorMessage } from '../services/api.js';
-import AdminSidebar from '../components/AdminSidebar.vue';
 
-// ——— Orders State ———
-const orders = ref([]);
-const isSidebarOpen = ref(true);
-
-// Pagination States
-const itemsPerPage = 10;
-const currentOrderPage = ref(1);
-
-function toggleSidebar() {
-    isSidebarOpen.value = !isSidebarOpen.value;
-}
-
-async function loadOrders() {
-    try {
-        orders.value = await getAllOrders();
-    } catch (err) {
-        console.error('Failed to load orders:', getErrorMessage(err));
-    }
-}
-
-// ——— Orders Management Actions ———
-async function handleUpdateStatus(orderId, nextStatus) {
-    if (!confirm(`Are you sure you want to change order status to "${nextStatus}"?`)) return;
-    try {
-        await updateOrderStatus(orderId, nextStatus);
-        await loadOrders();
-    } catch (err) {
-        console.error('Failed to update order status:', getErrorMessage(err));
-    }
-}
-
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-// ——— Orders Pagination Logic ───
-const totalOrderPages = computed(() => Math.ceil(orders.value.length / itemsPerPage));
-
-const visibleOrderPages = computed(() => {
-    const total = totalOrderPages.value;
-    const current = currentOrderPage.value;
-
-    if (total <= 7) {
-        return Array.from({ length: total }, (_, i) => i + 1);
-    }
-
-    const pages = [];
-    pages.push(1);
-
-    if (current > 4) pages.push('...');
-
-    const start = Math.max(2, current - 1);
-    const end = Math.min(total - 1, current + 1);
-
-    for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) pages.push(i);
-    }
-
-    if (current < total - 3) pages.push('...');
-    if (!pages.includes(total)) pages.push(total);
-
-    return pages;
-});
-
-const paginatedOrders = computed(() => {
-    const start = (currentOrderPage.value - 1) * itemsPerPage;
-    return orders.value.slice(start, start + itemsPerPage);
-});
-
-function goToOrderPage(page) {
-    if (typeof page === 'number' && page >= 1 && page <= totalOrderPages.value) {
-        currentOrderPage.value = page;
-    }
-}
-function prevOrderPage() { goToOrderPage(currentOrderPage.value - 1); }
-function nextOrderPage() { goToOrderPage(currentOrderPage.value + 1); }
-
-onMounted(async () => {
-    if (window.innerWidth <= 992) {
-        isSidebarOpen.value = false;
-    }
-    await loadOrders();
-});
-</script>
 
 <style scoped>
 /* Scoped copy of dashboard design system token alignment styles */
-.admin-wrapper { display: flex; min-height: 100vh; background: #faf9fc; font-family: 'Inter', sans-serif; padding-top: 90px; flex-direction: row; }
+.admin-wrapper { display: flex; min-height: 100vh; background: #faf9fc; font-family: 'Inter', sans-serif; flex-direction: row; }
 .admin-sidebar { width: 260px; background: #3d0300; color: #ffffff; display: flex; flex-direction: column; flex-shrink: 0; position: relative; min-height: 100vh; z-index: 10; transition: width 0.3s ease; overflow-x: hidden; }
 .admin-sidebar.closed { width: 80px; }
 .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 1.25rem; height: 80px; }
@@ -281,4 +283,8 @@ onMounted(async () => {
 .page-num:hover { border-color: #3d0300; color: #3d0300; }
 .page-num.active { background: #3d0300; color: #ffffff; border-color: #3d0300; }
 .page-ellipsis { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #9ca3af; }
+
+@media (max-width: 992px) {
+    .admin-main { padding: 1.5rem; }
+}
 </style>

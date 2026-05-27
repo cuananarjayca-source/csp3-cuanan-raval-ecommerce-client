@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
 // Toggle logic stays inside the sidebar wrapper
@@ -9,10 +9,21 @@ function toggleSidebar() {
     isSidebarOpen.value = !isSidebarOpen.value;
 }
 
+function handleResize() {
+    if (window.innerWidth <= 992) {
+        isSidebarOpen.value = false;
+    }
+}
+
 onMounted(() => {
     if (window.innerWidth <= 992) {
         isSidebarOpen.value = false;
     }
+    window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', handleResize);
 });
 </script>
 
@@ -118,6 +129,7 @@ onMounted(() => {
 .admin-sidebar.closed .profile-text { display: none; }
 
 @media (max-width: 768px) {
-    .admin-sidebar { display: none; }
+    .admin-main { padding: 1.5rem; }
+    .hide-mobile { display: none; }
 }
 </style>
