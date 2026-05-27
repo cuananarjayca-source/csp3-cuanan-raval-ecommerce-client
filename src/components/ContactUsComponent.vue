@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 
 const form = reactive({
     fullName:     '',
@@ -8,16 +8,23 @@ const form = reactive({
     message:      '',
 });
 
+const isEmailInvalid = computed(() => form.email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email));
+const isMobileInvalid = computed(() => form.mobileNumber.length > 0 && !/^[0-9]{11}$/.test(form.mobileNumber));
+const isNameInvalid = computed(() => form.fullName.length > 0 && form.fullName.trim() === '');
+const isMessageInvalid = computed(() => form.message.length > 0 && form.message.trim() === '');
+
+const isFormValid = computed(() => {
+    return form.fullName.trim() !== '' && !isNameInvalid.value &&
+           form.email.trim() !== '' && !isEmailInvalid.value &&
+           form.mobileNumber.trim() !== '' && !isMobileInvalid.value &&
+           form.message.trim() !== '' && !isMessageInvalid.value;
+});
+
 const submitted = ref(false);
 const submitting = ref(false);
 
 function handleSubmit() {
-    // 1. Basic empty field check
-    if (!form.fullName || !form.email || !form.mobileNumber || !form.message) return;
-    
-    // 2. Strict 11-digit check (failsafe in case native HTML validation is bypassed)
-    const phoneRegex = /^[0-9]{11}$/;
-    if (!phoneRegex.test(form.mobileNumber)) return;
+    if (!isFormValid.value) return;
 
     submitting.value = true;
     setTimeout(() => {
@@ -66,10 +73,12 @@ function handleSubmit() {
                                     v-model="form.fullName"
                                     type="text"
                                     class="contact-input"
+                                    :class="{ 'input-error': isNameInvalid }"
                                     placeholder="Full Name"
                                     required
                                     autocomplete="name"
                                 />
+                                <p v-if="isNameInvalid" class="error-msg">Name is required</p>
                             </div>
 
                             <div class="field-group">
@@ -77,10 +86,12 @@ function handleSubmit() {
                                     v-model="form.email"
                                     type="email"
                                     class="contact-input"
+                                    :class="{ 'input-error': isEmailInvalid }"
                                     placeholder="E-mail"
                                     required
                                     autocomplete="email"
                                 />
+                                <p v-if="isEmailInvalid" class="error-msg">Invalid email address</p>
                             </div>
 
                             <div class="field-group">
@@ -88,6 +99,7 @@ function handleSubmit() {
                                     v-model="form.mobileNumber"
                                     type="tel"
                                     class="contact-input"
+                                    :class="{ 'input-error': isMobileInvalid }"
                                     placeholder="Mobile Number (11 Digits)"
                                     autocomplete="tel"
                                     required
@@ -96,21 +108,24 @@ function handleSubmit() {
                                     title="Please enter exactly 11 digits"
                                     @input="form.mobileNumber = $event.target.value.replace(/[^0-9]/g, '')"
                                 />
+                                <p v-if="isMobileInvalid" class="error-msg">Must be exactly 11 digits</p>
                             </div>
 
                             <div class="field-group">
                                 <textarea
                                     v-model="form.message"
                                     class="contact-input contact-textarea"
+                                    :class="{ 'input-error': isMessageInvalid }"
                                     placeholder="Message"
                                     required
                                 ></textarea>
+                                <p v-if="isMessageInvalid" class="error-msg">Message cannot be empty</p>
                             </div>
 
                             <button
                                 type="submit"
                                 class="submit-btn"
-                                :disabled="submitting"
+                                :disabled="submitting || !isFormValid"
                             >
                                 <span v-if="submitting" class="submit-spinner"></span>
                                 <span v-else>Submit</span>
@@ -261,6 +276,21 @@ function handleSubmit() {
     background: rgba(238, 128, 123, 0.12);
     box-shadow: 0 0 0 3px rgba(238, 128, 123, 0.2);
     color: #faf9fc;
+}
+
+.contact-input.input-error {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.error-msg { 
+    font-family: 'Inter', sans-serif; 
+    font-size: 0.75rem; 
+    color: #ef4444; 
+    margin: 0.4rem 0 0; 
+    display: block; 
+    text-align: center; 
 }
 
 /* Autofill — keep maroon look */

@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref, onBeforeMount } from "vue";
+import { watch, ref, computed, onBeforeMount } from "vue";
 import { Notyf } from "notyf";
 import { useRouter } from "vue-router";
 import { useGlobalStore } from "../stores/global.js";
@@ -15,8 +15,11 @@ const notyf = new Notyf();
 const router = useRouter();
 const globalStore = useGlobalStore();
 
+const isEmailInvalid = computed(() => email.value.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
+const isPasswordInvalid = computed(() => password.value.length > 0 && password.value.length < 8);
+
 watch([email, password], () => {
-    isEnabled.value = email.value.trim() !== "" && password.value.trim() !== "" && email.value.includes("@");
+    isEnabled.value = email.value.trim() !== "" && password.value.trim() !== "" && !isEmailInvalid.value;
 });
 
 async function handleSubmit() {
@@ -99,10 +102,14 @@ onBeforeMount(() => {
                             v-model="email"
                             type="email"
                             class="field-input"
+                            :class="{ 'input-error': isEmailInvalid }"
                             placeholder="Enter your Email"
                             autocomplete="email"
                             required
                         />
+                        <p v-if="isEmailInvalid" class="error-msg">
+                            <i class="bi bi-exclamation-circle"></i> Invalid email address
+                        </p>
                     </div>
 
                     <!-- Password -->
@@ -114,6 +121,7 @@ onBeforeMount(() => {
                                 v-model="password"
                                 :type="showPassword ? 'text' : 'password'"
                                 class="field-input"
+                                :class="{ 'input-error': isPasswordInvalid }"
                                 placeholder="Enter your Password"
                                 autocomplete="current-password"
                                 required
@@ -122,6 +130,9 @@ onBeforeMount(() => {
                                 <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                             </button>
                         </div>
+                        <p v-if="isPasswordInvalid" class="error-msg">
+                            <i class="bi bi-exclamation-circle"></i> Password must be at least 8 characters
+                        </p>
                     </div>
 
                     <!-- Forgot password -->
@@ -378,6 +389,8 @@ onBeforeMount(() => {
     box-shadow: 0 0 0 3px rgba(61, 3, 0, 0.08);
 }
 
+.field-input.input-error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+
 /* Password eye toggle */
 .input-eye-wrap {
     position: relative;
@@ -404,6 +417,8 @@ onBeforeMount(() => {
 }
 
 .eye-btn:hover { color: #3d0300; }
+
+.error-msg { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #ef4444; margin: 0.2rem 0 0; display: flex; align-items: center; gap: 0.3rem; }
 
 /* Forgot password */
 .forgot-text {

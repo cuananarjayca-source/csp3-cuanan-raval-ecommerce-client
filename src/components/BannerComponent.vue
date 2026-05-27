@@ -1,3 +1,22 @@
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+function scrollToProduct() {
+  const productEl = document.querySelector('.product-section') || document.querySelector('.gsap-animate:nth-child(2)');
+  if (productEl) {
+    productEl.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+  }
+}
+
+function goToProducts() {
+  router.push('/products');
+}
+</script>
+
 <template>
   <div class="container py-4 text-center">
     <div class="row align-items-center"> 
@@ -5,8 +24,8 @@
         <h1 class="banner-title mb-4">Brewed Beyond Ordinary. <span class="text-hero">Taste of Originality</span></h1>
         <p class="lead mb-5">Curated coffee experiences made with <strong><em>passion</em></strong>, <strong><em>dedication</em></strong>, and <strong><em>flavor</em></strong> in every can.</p>
         <div class="d-flex gap-3 align-items-center mt-4">
-          <button class="btn btn-learn">Learn More</button>
-          <button class="btn btn-order">
+          <button class="btn btn-learn" @click="scrollToProduct">Learn More</button>
+          <button class="btn btn-order" @click="goToProducts">
             Order Now <span class="arrow-icon">➔</span>
           </button>
         </div>

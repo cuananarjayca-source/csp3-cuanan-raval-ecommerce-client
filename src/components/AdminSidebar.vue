@@ -65,7 +65,7 @@ onUnmounted(() => {
             </RouterLink>
             
             <RouterLink to="/admin/reviews" class="nav-item" title="Reviews">
-                <i class="bi bi-people"></i>
+                <i class="bi bi-star-fill"></i>
                 <span class="nav-text">Reviews</span>
             </RouterLink>
 

@@ -7,12 +7,44 @@ import SaleDiscounts from "../components/SaleDiscounts.vue";
 import OurStory from "../components/OurStory.vue";
 import ReviewsComponent from "../components/ReviewsComponent.vue";
 import ContactUsComponent from "@/components/ContactUsComponent.vue";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 onMounted(() => {
 
   if (window.lucide) {
     window.lucide.createIcons()
   }
+
+  // GSAP ScrollTrigger Animations
+  const elements = gsap.utils.toArray('.gsap-animate');
+  
+  elements.forEach((el, index) => {
+    // For the banner (first element), we can animate it immediately without scroll
+    if (index === 0) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 0.2 }
+      );
+    } else {
+      gsap.fromTo(el,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%", 
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+  });
 })
 </script>
 
@@ -31,12 +63,12 @@ onMounted(() => {
     <!-- Main Content Layout Holder -->
     <main class="relative z-10">
       <!-- Add your core page content here -->
-      <BannerComponent />
-      <ProductListComponent />
-      <SaleDiscounts />
-      <OurStory id="our-story" />
-      <ReviewsComponent id="reviews" />
-      <ContactUsComponent id="contact-us" />
+      <div class="gsap-animate"><BannerComponent /></div>
+      <div class="gsap-animate"><ProductListComponent /></div>
+      <div class="gsap-animate"><SaleDiscounts /></div>
+      <div class="gsap-animate"><OurStory id="our-story" /></div>
+      <div class="gsap-animate"><ReviewsComponent id="reviews" /></div>
+      <div class="gsap-animate"><ContactUsComponent id="contact-us" /></div>
     </main>
   </div>
 </template>

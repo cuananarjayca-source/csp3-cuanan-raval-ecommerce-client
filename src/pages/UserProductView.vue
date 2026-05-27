@@ -337,20 +337,20 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3.5rem 1rem 1rem;
+  padding: 4.5rem 1.25rem 1.25rem;
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.42);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
   min-height: 100%;
 }
 
 .catalog-product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 36px rgba(61, 3, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(61, 3, 0, 0.15);
 }
 
 .catalog-card-image-wrap {
@@ -358,18 +358,25 @@ onMounted(async () => {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: -5.5rem;
-  margin-bottom: 0.5rem;
-  min-height: 130px;
+  margin-top: -6.5rem;
+  margin-bottom: 1rem;
+  min-height: 160px;
   pointer-events: none;
+  z-index: 1;
 }
 
 .catalog-card-image {
-  width: 110px;
+  width: 160px;
   height: auto;
   object-fit: contain;
-  transform: rotate(30deg);
+  transform: rotate(20deg);
   filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.2));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
+}
+
+.catalog-product-card:hover .catalog-card-image {
+  transform: translateY(-12px) rotate(10deg) scale(1.1);
+  filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.3));
 }
 
 .catalog-card-body {

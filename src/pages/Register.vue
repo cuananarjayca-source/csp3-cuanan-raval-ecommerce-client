@@ -100,13 +100,19 @@ onBeforeMount(() => {
                     <!-- Email -->
                     <div class="field-group">
                         <label for="reg-email" class="field-label">Email</label>
-                        <input id="reg-email" v-model="email" type="email" class="field-input" placeholder="Enter your Email" autocomplete="email" required />
+                        <input id="reg-email" v-model="email" type="email" class="field-input" :class="{ 'input-error': isEmailInvalid }" placeholder="Enter your Email" autocomplete="email" required />
+                        <p v-if="isEmailInvalid" class="error-msg">
+                            <i class="bi bi-exclamation-circle"></i> Invalid email address
+                        </p>
                     </div>
 
                     <!-- Mobile -->
                     <div class="field-group">
                         <label for="reg-mobile" class="field-label">Mobile Number</label>
-                        <input id="reg-mobile" v-model="mobileNo" type="text" class="field-input" placeholder="09XXXXXXXXX" maxlength="11" required />
+                        <input id="reg-mobile" v-model="mobileNo" type="text" class="field-input" :class="{ 'input-error': isMobileInvalid }" placeholder="09XXXXXXXXX" maxlength="11" required />
+                        <p v-if="isMobileInvalid" class="error-msg">
+                            <i class="bi bi-exclamation-circle"></i> Must be exactly 11 digits
+                        </p>
                     </div>
 
                     <!-- Password -->
@@ -118,6 +124,7 @@ onBeforeMount(() => {
                                 v-model="password"
                                 :type="showPassword ? 'text' : 'password'"
                                 class="field-input"
+                                :class="{ 'input-error': isPasswordInvalid }"
                                 placeholder="Min. 8 characters"
                                 autocomplete="new-password"
                                 required
@@ -126,6 +133,9 @@ onBeforeMount(() => {
                                 <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                             </button>
                         </div>
+                        <p v-if="isPasswordInvalid" class="error-msg">
+                            <i class="bi bi-exclamation-circle"></i> Password must be at least 8 characters
+                        </p>
                     </div>
 
                     <!-- Confirm password -->
@@ -137,7 +147,7 @@ onBeforeMount(() => {
                                 v-model="confirmPass"
                                 :type="showConfirm ? 'text' : 'password'"
                                 class="field-input"
-                                :class="{ 'input-mismatch': confirmPass && confirmPass !== password }"
+                                :class="{ 'input-error': isConfirmInvalid }"
                                 placeholder="Re-enter your password"
                                 autocomplete="new-password"
                                 required
@@ -146,7 +156,7 @@ onBeforeMount(() => {
                                 <i :class="showConfirm ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                             </button>
                         </div>
-                        <p v-if="confirmPass && confirmPass !== password" class="mismatch-msg">
+                        <p v-if="isConfirmInvalid" class="error-msg">
                             <i class="bi bi-exclamation-circle"></i> Passwords don't match
                         </p>
                     </div>
@@ -265,14 +275,14 @@ onBeforeMount(() => {
 .field-input { height: 52px; border: 1.5px solid #d1d5db; border-radius: 14px; padding: 0 18px; font-family: 'Inter', sans-serif; font-size: 0.88rem; color: #1a1a1a; background: #ffffff; outline: none; transition: border-color 0.25s ease, box-shadow 0.25s ease; width: 100%; }
 .field-input::placeholder { color: #9ca3af; }
 .field-input:focus { border-color: #3d0300; box-shadow: 0 0 0 3px rgba(61, 3, 0, 0.08); }
-.field-input.input-mismatch { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+.field-input.input-error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
 
 .input-eye-wrap { position: relative; display: flex; align-items: center; }
 .input-eye-wrap .field-input { padding-right: 50px; }
 .eye-btn { position: absolute; right: 14px; background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 1.05rem; padding: 0; transition: color 0.2s ease; display: flex; align-items: center; }
 .eye-btn:hover { color: #3d0300; }
 
-.mismatch-msg { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #ef4444; margin: 0.2rem 0 0; display: flex; align-items: center; gap: 0.3rem; }
+.error-msg { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #ef4444; margin: 0.2rem 0 0; display: flex; align-items: center; gap: 0.3rem; }
 
 .cta-btn { height: 55px; width: 100%; background: #3d0300; color: #faf9fc; border: none; border-radius: 14px; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.25rem; }
 .cta-btn:hover:not(:disabled) { background: #ee807b; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(238,128,123,0.35); }
