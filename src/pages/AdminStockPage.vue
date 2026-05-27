@@ -362,7 +362,6 @@ onMounted(async () => {
 /* ── MAIN ── */
 .admin-main { flex: 1; padding: 2.5rem 3rem; overflow-y: auto; transition: width 0.3s ease; }
 .main-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-.header-titles {}
 .page-title { font-family: 'Yanone Kaffeesatz', sans-serif; font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.2rem 0; }
 .page-sub { font-size: 0.9rem; color: #6b7280; margin: 0; }
 .header-actions { display: flex; gap: 1rem; }

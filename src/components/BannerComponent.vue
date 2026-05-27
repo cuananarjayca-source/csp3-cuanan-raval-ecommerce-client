@@ -18,7 +18,7 @@ function goToProducts() {
 </script>
 
 <template>
-  <div class="container py-4 text-center">
+  <div class="banner-wrapper container py-4 text-center">
     <div class="row align-items-center"> 
       <div class="col-md-4 text-md-start text-center"> 
         <h1 class="banner-title mb-4">Brewed Beyond Ordinary. <span class="text-hero">Taste of Originality</span></h1>
@@ -53,6 +53,7 @@ function goToProducts() {
 /* ==========================================
    GLOBAL HERO BASE STYLES
    ========================================== */
+
 .banner-title {
   font-family: "Canva-Sunday", serif;
   font-size: 5rem;

@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import BannerComponent from "../components/BannerComponent.vue";
-import ProductListComponent from "../components/ProductListComponent.vue";
+import ProductSection from "../components/ProductSection.vue";
 import SaleDiscounts from "../components/SaleDiscounts.vue";
 import OurStory from "../components/OurStory.vue";
 import ReviewsComponent from "../components/ReviewsComponent.vue";
@@ -22,7 +22,6 @@ onMounted(() => {
   const elements = gsap.utils.toArray('.gsap-animate');
   
   elements.forEach((el, index) => {
-    // For the banner (first element), we can animate it immediately without scroll
     if (index === 0) {
       gsap.fromTo(el,
         { opacity: 0, y: 40 },
@@ -50,8 +49,6 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen overflow-hidden relative main-wrapper">
-    <!-- Floating Background Elements -->
-    <div class="wave-bg"></div>
 
     <!-- Nav -->
     <header class="relative z-20">
@@ -64,7 +61,7 @@ onMounted(() => {
     <main class="relative z-10">
       <!-- Add your core page content here -->
       <div class="gsap-animate"><BannerComponent /></div>
-      <div class="gsap-animate"><ProductListComponent /></div>
+      <div class="gsap-animate"><ProductSection /></div>
       <div class="gsap-animate"><SaleDiscounts /></div>
       <div class="gsap-animate"><OurStory id="our-story" /></div>
       <div class="gsap-animate"><ReviewsComponent id="reviews" /></div>
@@ -75,6 +72,7 @@ onMounted(() => {
 
 
 <style scoped>
+
 /* Scoped styles target only this component and keep your global CSS clean */
 .main-wrapper {
   background: linear-gradient(rgb(253, 232, 228), rgb(249, 201, 187));

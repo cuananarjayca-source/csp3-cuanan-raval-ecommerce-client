@@ -397,7 +397,6 @@ onMounted(async () => {
   margin: 0;
   padding: 0 0.35rem;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
