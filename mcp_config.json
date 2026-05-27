@@ -1,0 +1,33 @@
+{
+  "mcp_version": "1.0",
+  "project": {
+    "name": "b606-csp3-cuanan-raval",
+    "description": "Starter MCP config"
+  },
+  "entry_point": "index.js",
+  "runtime": "nodejs18",
+  "models": {
+    "default": "gpt-5-mini",
+    "allowed": ["gpt-5-mini"]
+  },
+  "routes": {
+    "/": {
+      "handler": "index.handler",
+      "auth": false
+    }
+  },
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "mcpServers": {
+    "TestSprite": {
+      "command": "npx",
+      "args": [
+        "@testsprite/testsprite-mcp@latest"
+      ],
+      "env": {
+        "API_KEY": "YOUR_TESTSPRITE_API_KEY"
+      }
+    }
+  }
+}
