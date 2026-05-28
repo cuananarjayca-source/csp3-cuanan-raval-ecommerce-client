@@ -2,7 +2,7 @@ import axios from "axios";
 
 /** Backend: http://localhost:4000 (cors enabled). Override with VITE_API_BASE_URL in .env */
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000",
+    baseURL: import.meta.env.VITE_JOB_TRACKER_API 
 });
 
 api.interceptors.request.use((config) => {

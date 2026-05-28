@@ -1,3 +1,7 @@
+
+.env
+node_modules
+
 # Logs
 logs
 *.log
@@ -44,3 +48,4 @@ __screenshots__/
 .env
 
 mcp_config.json
+

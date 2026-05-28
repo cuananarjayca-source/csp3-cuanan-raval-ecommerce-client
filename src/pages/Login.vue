@@ -138,7 +138,7 @@ onBeforeMount(() => {
                     <!-- Forgot password -->
                     <p class="forgot-text">
                         Forgot your password?
-                        <RouterLink to="/forgot-password" class="forgot-link">Click here</RouterLink>
+                        <RouterLink to="/" class="forgot-link">Click here</RouterLink>
                         to reset.
                     </p>
 
@@ -179,11 +179,11 @@ onBeforeMount(() => {
 
                 <!-- Footer links -->
                 <div class="auth-footer">
-                    <RouterLink to="/privacy">Privacy Policy</RouterLink>
+                    <RouterLink to="/">Privacy Policy</RouterLink>
                     <span class="footer-dot">·</span>
-                    <RouterLink to="/terms">Terms &amp; Conditions</RouterLink>
+                    <RouterLink to="/">Terms &amp; Conditions</RouterLink>
                     <span class="footer-dot">·</span>
-                    <RouterLink to="/help">Need help?</RouterLink>
+                    <RouterLink to="/">Need help?</RouterLink>
                 </div>
                 <p class="auth-copyright">© 2026 TARO606. All Rights Reserved.</p>
             </div>
