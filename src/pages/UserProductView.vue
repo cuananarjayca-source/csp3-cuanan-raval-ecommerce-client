@@ -278,6 +278,8 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  overflow: hidden;
+  padding: 4rem 0;
 }
 
 /* 2. Background container acts as a bounding box frame */
