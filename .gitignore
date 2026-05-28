@@ -42,3 +42,5 @@ __screenshots__/
 *.timestamp-*-*.mjs
 
 .env
+
+mcp_config.json

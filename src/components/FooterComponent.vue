@@ -89,7 +89,7 @@ import { RouterLink } from "vue-router";
 }
 
 .brand-tagline {
-    font-family: 'Yanone Kaffeesatz', sans-serif;
+    font-family: 'Canva-Sunday', sans-serif;
     font-size: 1.4rem;
     margin-bottom: 0.8rem;
     color: #3d0300;
@@ -171,7 +171,7 @@ import { RouterLink } from "vue-router";
 }
 
 .scan-text { font-size: 0.75rem; font-weight: 600; margin: 0.3rem 0; }
-.qr-code { width: 140px; border: 1px solid #3d0300; }
+.qr-code { width: 250px; height: auto; display: block; margin-left: -60px; }
 
 .footer-bottom {
     text-align: center;

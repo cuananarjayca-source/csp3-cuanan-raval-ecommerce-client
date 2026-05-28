@@ -120,6 +120,9 @@ onMounted(async () => {
 <template>
   <div class="product-catalog-section">
     <div class="section-background"></div>
+      <video autoplay muted loop playsinline class="background-video">
+        <source src="../assets/wave-animation.mp4" type="video/mp4">
+      </video>
 
     <div class="ps-container container py-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -269,12 +272,39 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* 1. Main Section: Added padding to push everything down from the Navbar */
+
+/* 1. Parent container must establish a new positioning context */
 .product-catalog-section {
   position: relative;
+  width: 100%;
   min-height: 100vh;
-  padding: 120px 0 60px 0; /* Increased top padding to push content further down */
-  background: linear-gradient(135deg, #fde8e4 0%, #f9c9bb 100%);
+}
+
+/* 2. Background container acts as a bounding box frame */
+.section-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0; /* Keeps it behind content layers */
+}
+
+/* 3. Forces your video clip to stretch and cover the entire grid context */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 4. Forces your search filters, titles, and product cards above the video track */
+.ps-container {
+  position: relative;
+  z-index: 1; /* Floats perfectly above z-index: 0 background */
 }
 
 

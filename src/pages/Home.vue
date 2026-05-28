@@ -13,54 +13,44 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 onMounted(() => {
-
-  if (window.lucide) {
-    window.lucide.createIcons()
-  }
-
-  // GSAP ScrollTrigger Animations
-  const elements = gsap.utils.toArray('.gsap-animate');
+  const sections = gsap.utils.toArray('.gsap-animate');
   
-  elements.forEach((el, index) => {
-    if (index === 0) {
-      gsap.fromTo(el,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 0.2 }
-      );
-    } else {
-      gsap.fromTo(el,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%", 
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
+  sections.forEach((section, index) => {
+    // Skip pinning the last section so the footer doesn't get stuck forever
+    if (index === sections.length - 1) return;
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",      /* Pins when the top of the section hits the top of the screen */
+      pin: true,             /* Freezes the section in place */
+      pinSpacing: false,     /* Allows the next section to ride up directly over it */
+      scrub: true
+    });
   });
-})
+});
 </script>
 
 <template>
   <div class="min-h-screen overflow-hidden relative main-wrapper">
+    
+    <!-- 1. Combined Header & Banner inside the Video Container -->
+    <div class="gsap-animate banner-video-container">
+      <video autoplay muted loop playsinline class="background-video">
+        <source src="../assets/wave-animation.mp4" type="video/mp4">
+      </video>
 
-    <!-- Nav -->
-    <header class="relative z-20">
-      <nav class="p-4">
-        <!-- Your navigation content goes here -->
-      </nav>
-    </header>
+      <!-- Nav now overlays perfectly on top of the same video background -->
+      <header class="relative z-20">
+        <nav class="p-4">
+          <!-- Your navigation content goes here -->
+        </nav>
+      </header>
 
-    <!-- Main Content Layout Holder -->
+      <BannerComponent />
+    </div>
+
+    <!-- Main Content Layout Holder (Rest of your sections remain below) -->
     <main class="relative z-10">
-      <!-- Add your core page content here -->
-      <div class="gsap-animate"><BannerComponent /></div>
       <div class="gsap-animate"><ProductSection /></div>
       <div class="gsap-animate"><SaleDiscounts /></div>
       <div class="gsap-animate"><OurStory id="our-story" /></div>
@@ -70,13 +60,32 @@ onMounted(() => {
   </div>
 </template>
 
-
 <style scoped>
+.banner-video-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
 
-/* Scoped styles target only this component and keep your global CSS clean */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0; 
+}
+
 .main-wrapper {
-  background: linear-gradient(rgb(253, 232, 228), rgb(249, 201, 187));
-  font-family: 'Inter', sans-serif;
+  background: #dcd9d4;
+}
+
+/* Force both header and BannerComponent content layers above the video canvas */
+:deep(.banner-video-container > header),
+:deep(.banner-video-container > div) {
+  position: relative;
+  z-index: 1;
 }
 
 /* Typography Overrides */
@@ -87,5 +96,6 @@ onMounted(() => {
 .font-cta {
   font-family: 'Montserrat', sans-serif;
 }
-
 </style>
+
+

@@ -85,11 +85,17 @@ p.lead {
 
 /* Hero - Button Styles */
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap; 
   border-radius: 50px;       
   font-family: 'Inter', sans-serif;      
   font-weight: 600;          
-  padding: 12px 30px;        
+  padding: 12px 24px;        
   font-size: 1.1rem;         
+  height: auto;
+  aspect-ratio: auto;
   transition: all 0.3s ease; 
   opacity: 1;
   animation-name: fadeInOpacity;
@@ -172,8 +178,26 @@ p.lead {
   }
 
   .btn {
-    padding: 10px 24px;
-    font-size: 1rem;
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    width: auto !important;       
+    height: auto !important;      
+    aspect-ratio: auto !important; 
+    
+    /* 1. Adjusted font size and padding to slim down the button shape */
+    font-size: 0.85rem;           /* Scaled down down from 1rem */
+    padding: 10px 20px;           /* Reduced vertical and horizontal breathing room */
+    border-radius: 9999px;        
+    
+    /* 2. Forces text to stay on one single line */
+    white-space: nowrap;          
+  }
+
+  /* Keep side-by-side gap clean */
+  .btn + .btn {
+    margin-left: 12px;            /* Slightly lowered gap for tighter tablet screens */
+    margin-bottom: 0;             
   }
 
   .hero-strawberry {
@@ -184,6 +208,8 @@ p.lead {
     max-width: 700px;
   }
 }
+
+
 
 /* ==========================================
    SMALL SCREENS (Mobile: max-width 768px)
@@ -208,13 +234,24 @@ p.lead {
     font-size: 0.95rem;
   }
 
+  /* 1. Reset container to stack buttons cleanly */
+  .button-group-container-class-name {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 12px; /* Replaces manual margin rules */
+  }
+
+  /* 2. Reset fixed dimensions causing the circular distortion */
   .btn {
     display: block;
-    width: 100%;
-    margin-bottom: 12px;
+    width: 100% !important; /* Force full width on mobile */
+    height: auto !important; /* Undo any explicit heights */
+    aspect-ratio: auto !important; /* Prevents button turning into a circle */
+    padding: 12px 24px; /* Creates clean uniform button proportions */
     text-align: center;
+    border-radius: 9999px; /* Maintains clean pill shape without warping text */
   }
-  
   
   .btn + .btn {
     margin-left: 0;
@@ -229,6 +266,7 @@ p.lead {
     margin-top: 20px;
   }
 }
+
 
 /* ==========================================
    ANIMATIONS KEYFRAMES
