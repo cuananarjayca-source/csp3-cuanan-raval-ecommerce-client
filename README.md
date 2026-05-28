@@ -1,38 +1,40 @@
-# Capstone 3
+# Capstone 3 Demo App Overview:
 
-This template should help get you started developing with Vue 3 in Vite.
+## Application Name: Taro606
 
-## Recommended IDE Setup
+## Team Members:
+* **Arjay Cuanan**
+* **Maiki Raval**
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## User Credentials:
+* Admin User
+    * email: **admin**@mail.com
+    * password: **admin123**
+* Dummy Customer
+    * email: **customer**@mail.com
+    * password: **customer123**
 
-## Recommended Browser Setup
+## Features:
+## Features by Maiki
+**Vue JS Template:**
+* Login Page
+* Logout Page
+* Register Page
+* Admin Dashboard
+* Cart 
+* Orders
+* Payments
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Features by Arjay
+### Product Resources
+* Product Catalog
+* Product Details
+* Home Page
+* Frontend Design
+* Sample Products 
+* Navbar 
+* Footer 
+* Sidebar 
+ 
 
-## Customize configuration
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
