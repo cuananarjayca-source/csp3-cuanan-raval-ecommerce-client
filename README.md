@@ -260,5 +260,3 @@ If you discover a committed secret in the repository history, rotate the affecte
 | **Arjay Cuanan** | Product catalog & detail, Home page, frontend design, navbar/footer/sidebar |
 
 ---
-
-*Documentation compiled by a review team covering architecture, implementation, DevOps/deployment, security, and technical writing, based on the current state of the public repository.*
