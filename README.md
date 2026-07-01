@@ -1,4 +1,4 @@
-# Zuiit E-Commerce — Client (Capstone 3)
+# Zuitt E-Commerce — Client (Capstone 3)
 
 **Repository:** `csp3-cuanan-raval-ecommerce-client`
 **Live demo:** https://csp3-cuanan-raval-ecommerce-client.vercel.app
@@ -10,7 +10,7 @@
 
 ## 1. Project Overview
 
-Zuiit is a lightweight **e-commerce single-page application (SPA)** built as a capstone project. This repository is the **frontend client only**; it is designed to be paired with a separate Node/Express + MongoDB backend API (referenced in the product spec as `csp2-b606-cuanan-raval`).
+TARO606 is a lightweight **e-commerce single-page application (SPA)** built as a capstone project. This repository is the **frontend client only**; it is designed to be paired with a separate Node/Express + MongoDB backend API (referenced in the product spec as `csp2-b606-cuanan-raval`).
 
 ### Problem it solves
 Provides a fast, responsive storefront where shoppers can browse a product catalog, manage a cart, complete checkout, and leave reviews — while giving admins a dashboard to manage products, stock, and orders without touching the database directly.
