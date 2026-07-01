@@ -1,3 +1,5 @@
+<img width="1858" height="919" alt="image" src="https://github.com/user-attachments/assets/fb58a1cb-ffa1-4151-b580-9a14aac6f547" />
+
 # Zuitt E-Commerce — Client (Capstone 3)
 
 **Repository:** `csp3-cuanan-raval-ecommerce-client`
